@@ -3,843 +3,204 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Say Cheese Photobooth</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&display=swap" rel="stylesheet">
-
+<title>Qie Photobooth Premium v2</title>
 <style>
-
 :root{
-    --butter:#FFF4B8;
-    --pink:#F6B8C8;
-    --pink-dark:#E89BB0;
-    --white:#ffffff;
-    --shadow:0 10px 30px rgba(0,0,0,.12);
+ --bg:#fff6b8;
+ --pink:#ff7eb6;
+ --card:#fffdf8;
 }
-
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:'Fredoka',sans-serif;
-}
-
+*{box-sizing:border-box}
 body{
-    min-height:100vh;
-
-    background:
-    radial-gradient(circle at 25px 25px,
-    rgba(246,184,200,.75) 6px,
-    transparent 7px),
-
-    radial-gradient(circle at 75px 75px,
-    rgba(246,184,200,.75) 6px,
-    transparent 7px);
-
-    background-size:100px 100px;
-    background-color:var(--butter);
-
-    display:flex;
-    justify-content:center;
-    align-items:center;
-
-    padding:20px;
+ margin:0;
+ font-family:Arial,sans-serif;
+ min-height:100vh;
+ background:
+ radial-gradient(circle at 20px 20px,#ff9cc8 8px,transparent 9px),
+ radial-gradient(circle at 80px 80px,#ff9cc8 8px,transparent 9px),
+ var(--bg);
+ background-size:100px 100px;
+ display:flex;
+ justify-content:center;
+ padding:20px;
 }
-
-.container{
-    width:100%;
-    max-width:1200px;
+.wrap{
+ width:min(1100px,100%);
+ background:rgba(255,255,255,.75);
+ backdrop-filter:blur(8px);
+ border-radius:28px;
+ padding:20px;
+ box-shadow:0 10px 30px rgba(0,0,0,.15);
 }
-
-.title{
-    text-align:center;
-    font-size:clamp(2rem,5vw,4rem);
-    color:#444;
-    margin-bottom:20px;
-}
-
-.subtitle{
-    text-align:center;
-    color:#666;
-    margin-bottom:25px;
-}
-
-.main{
-    display:grid;
-    grid-template-columns:1fr 350px;
-    gap:24px;
-}
-
-.camera-card{
-    background:white;
-    border-radius:30px;
-    padding:20px;
-    box-shadow:var(--shadow);
-}
-
-.preview-wrapper{
-    position:relative;
-    overflow:hidden;
-    border-radius:24px;
-}
-
-video{
-    width:100%;
-    display:block;
-
-    transform:scaleX(-1);
-
-    border-radius:24px;
-    background:black;
-}
-
-.overlay{
-    position:absolute;
-    inset:0;
-    pointer-events:none;
-
-    display:flex;
-    justify-content:center;
-    align-items:center;
-}
-
-.countdown{
-    width:120px;
-    height:120px;
-
-    border-radius:50%;
-
-    background:rgba(255,255,255,.9);
-
-    display:flex;
-    justify-content:center;
-    align-items:center;
-
-    font-size:4rem;
-    font-weight:600;
-
-    color:#444;
-
-    opacity:0;
-    transition:.3s;
-}
-
+h1{text-align:center;color:#ff4f97}
 .controls{
-    margin-top:20px;
-    display:flex;
-    justify-content:center;
+ display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:15px;
 }
-
-button{
-    border:none;
-    cursor:pointer;
-    transition:.25s;
+button,select{
+ border:none;border-radius:999px;padding:12px 18px;font-weight:bold;
 }
-
-.start-btn{
-    background:var(--pink);
-    color:white;
-
-    padding:14px 28px;
-
-    border-radius:999px;
-    font-size:1rem;
-    font-weight:600;
+button{cursor:pointer}
+video{
+ width:100%;max-width:650px;border-radius:20px;
+ transform:scaleX(-1);
+ display:block;margin:auto;
 }
-
-.start-btn:hover{
-    transform:translateY(-2px);
+.center{text-align:center}
+#countdown{font-size:64px;font-weight:bold;color:#ff4f97}
+.frame-preview{
+ width:48px;height:70px;border-radius:8px;display:inline-block;margin:3px;border:2px solid #ddd;
 }
-
-.side-panel{
-    display:flex;
-    flex-direction:column;
-    gap:18px;
-}
-
-.card{
-    background:white;
-    border-radius:24px;
-    box-shadow:var(--shadow);
-    padding:20px;
-}
-
-.card h3{
-    color:#444;
-    margin-bottom:15px;
-}
-
-.frames{
-    display:grid;
-    grid-template-columns:repeat(2,1fr);
-    gap:10px;
-}
-
-.frame{
-    aspect-ratio:3/4;
-    background:#f5f5f5;
-    border-radius:14px;
-    overflow:hidden;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    color:#aaa;
-    font-size:.9rem;
-}
-
-.frame img{
-    width:100%;
-    height:100%;
-    object-fit:cover;
-}
-
-.strip-preview{
-    width:100%;
-    display:none;
-    border-radius:18px;
-    overflow:hidden;
-}
-
-.download-btn{
-    width:100%;
-    margin-top:15px;
-
-    background:var(--pink-dark);
-    color:white;
-
-    padding:14px;
-    border-radius:14px;
-
-    font-size:1rem;
-    font-weight:600;
-
-    display:none;
-}
-
-.status{
-    text-align:center;
-    margin-top:10px;
-    color:#666;
-}
-
-.flash{
-    position:fixed;
-    inset:0;
-    background:white;
-    opacity:0;
-    pointer-events:none;
-}
-
-.flash.active{
-    animation:flash .35s;
-}
-
-@keyframes flash{
-    0%{opacity:0;}
-    30%{opacity:1;}
-    100%{opacity:0;}
-}
-
-@media(max-width:900px){
-
-    .main{
-        grid-template-columns:1fr;
-    }
-
-    .side-panel{
-        order:2;
-    }
-
-}
-
+canvas{display:none}
 </style>
 </head>
-
 <body>
+<div class="wrap">
+<h1>📸 Say Cheese! ✨</h1>
 
-<div class="flash" id="flash"></div>
+<div class="controls">
+<select id="frame">
+<option value="white">White</option>
+<option value="black">Black</option>
+<option value="maroon">Maroon</option>
+<option value="yellow">Pastel Yellow</option>
+<option value="dots">Black Polkadot</option>
+</select>
 
-<div class="container">
-
-    <h1 class="title">📸 Say Cheese!</h1>
-
-    <p class="subtitle">
-        Ambil 4 foto otomatis dan buat photostrip aesthetic.
-    </p>
-
-    <div class="main">
-
-        <div class="camera-card">
-
-            <div class="preview-wrapper">
-
-                <video
-                    id="video"
-                    autoplay
-                    playsinline
-                    muted>
-                </video>
-
-                <div class="overlay">
-
-                    <div
-                        class="countdown"
-                        id="countdown">
-                        3
-                    </div>
-
-                </div>
-
-            </div>
-
-            <div class="controls">
-
-                <button
-                    id="startBtn"
-                    class="start-btn">
-
-                    Start Photobooth
-
-                </button>
-
-            </div>
-
-            <p
-                class="status"
-                id="status">
-
-                Siap mengambil 4 foto
-
-            </p>
-
-        </div>
-
-        <div class="side-panel">
-
-            <div class="card">
-
-                <h3>Frame</h3>
-
-                <div class="frames">
-
-                    <div class="frame" id="frame1">
-                        Foto 1
-                    </div>
-
-                    <div class="frame" id="frame2">
-                        Foto 2
-                    </div>
-
-                    <div class="frame" id="frame3">
-                        Foto 3
-                    </div>
-
-                    <div class="frame" id="frame4">
-                        Foto 4
-                    </div>
-
-                </div>
-
-            </div>
-
-            <div class="card">
-
-                <h3>Hasil Photostrip</h3>
-
-                <img
-                    id="stripPreview"
-                    class="strip-preview">
-
-                <button
-                    id="downloadBtn"
-                    class="download-btn">
-
-                    Download PNG
-
-                </button>
-
-            </div>
-
-        </div>
-
-    </div>
-
+<button id="flashBtn">Flash: OFF</button>
+<button id="startBtn">Start Session</button>
+<button id="downloadBtn" disabled>Download Strip</button>
 </div>
 
-<canvas
-    id="captureCanvas"
-    style="display:none;">
-</canvas>
+<video id="video" autoplay playsinline></video>
+<div id="countdown" class="center"></div>
+
+<canvas id="capture"></canvas>
+<canvas id="result"></canvas>
+</div>
 
 <script>
-  
-const video = document.getElementById("video");
-const countdown = document.getElementById("countdown");
-const startBtn = document.getElementById("startBtn");
-const statusText = document.getElementById("status");
-const flash = document.getElementById("flash");
+const video=document.getElementById('video');
+const capture=document.getElementById('capture');
+const result=document.getElementById('result');
+const ctxCap=capture.getContext('2d');
+const ctxRes=result.getContext('2d');
 
-const frameElements = [
-    document.getElementById("frame1"),
-    document.getElementById("frame2"),
-    document.getElementById("frame3"),
-    document.getElementById("frame4")
-];
+let photos=[];
+let flash=false;
 
-const canvas = document.getElementById("captureCanvas");
-const ctx = canvas.getContext("2d");
+document.getElementById('flashBtn').onclick=()=>{
+ flash=!flash;
+ document.getElementById('flashBtn').textContent="Flash: "+(flash?"ON":"OFF");
+};
 
-const capturedPhotos = [];
+navigator.mediaDevices.getUserMedia({video:{facingMode:"user"}})
+.then(stream=>video.srcObject=stream);
 
-let stream = null;
+function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
 
+async function startSession(){
+ photos=[];
 
+ for(let i=0;i<4;i++){
+   for(let c=3;c>=1;c--){
+     countdown.textContent=c;
+     await sleep(1000);
+   }
+   countdown.textContent="📸";
 
-async function startCamera(){
+   if(flash){
+      const f=document.createElement("div");
+      f.style.cssText="position:fixed;inset:0;background:white;z-index:9999";
+      document.body.appendChild(f);
+      setTimeout(()=>f.remove(),120);
+   }
 
-    try{
+   capture.width=video.videoWidth;
+   capture.height=video.videoHeight;
 
-        stream = await navigator.mediaDevices.getUserMedia({
+   ctxCap.save();
+   ctxCap.scale(-1,1);
+   ctxCap.drawImage(video,-capture.width,0,capture.width,capture.height);
+   ctxCap.restore();
 
-            video:{
-                facingMode:"user",
-                width:{ideal:1080},
-                height:{ideal:1440}
-            },
+   photos.push(capture.toDataURL("image/png"));
+   await sleep(600);
+ }
 
-            audio:false
+ countdown.textContent="Done ✨";
+ makeStrip();
+}
 
+function frameColor(){
+ const v=document.getElementById("frame").value;
+ if(v==="white") return "#fff";
+ if(v==="black") return "#111";
+ if(v==="maroon") return "#6b1022";
+ if(v==="yellow") return "#fff1a8";
+ return "dots";
+}
+
+function makeStrip(){
+ const W=1000,H=1400;
+ result.width=W;
+ result.height=H;
+
+ const frame=frameColor();
+
+ if(frame==="dots"){
+   ctxRes.fillStyle="#111";
+   ctxRes.fillRect(0,0,W,H);
+   ctxRes.fillStyle="#fff";
+   for(let x=25;x<W;x+=50){
+    for(let y=25;y<H;y+=50){
+      ctxRes.beginPath();
+      ctxRes.arc(x,y,6,0,Math.PI*2);
+      ctxRes.fill();
+    }
+   }
+ }else{
+   ctxRes.fillStyle=frame;
+   ctxRes.fillRect(0,0,W,H);
+ }
+
+ let loaded=0;
+ const imgs=[];
+
+ photos.forEach((src,i)=>{
+   const img=new Image();
+   img.onload=()=>{
+      imgs[i]=img;
+      loaded++;
+      if(loaded===4){
+        const pos=[
+         [70,110],[520,110],
+         [70,700],[520,700]
+        ];
+
+        pos.forEach((p,j)=>{
+          ctxRes.drawImage(imgs[j],p[0],p[1],400,500);
         });
 
-        video.srcObject = stream;
+        ctxRes.fillStyle="#ff5f9e";
+        ctxRes.font="bold 42px Arial";
+        ctxRes.textAlign="center";
+        ctxRes.fillText("qiephotobooth",W/2,H-50);
 
-    }
-    catch(err){
-
-        alert(
-            "Kamera tidak dapat diakses. Pastikan izin kamera sudah diberikan."
-        );
-
-        console.error(err);
-    }
-
+        document.getElementById("downloadBtn").disabled=false;
+      }
+   };
+   img.src=src;
+ });
 }
 
-
-
-startCamera();
-
-
-
-function showCountdown(value){
-
-    countdown.style.opacity = "1";
-    countdown.textContent = value;
-
-}
-
-function hideCountdown(){
-
-    countdown.style.opacity = "0";
-
-}
-
-
-
-function triggerFlash(){
-
-    flash.classList.add("active");
-
-    setTimeout(()=>{
-
-        flash.classList.remove("active");
-
-    },350);
-
-}
-
-
-
-async function runCountdown(seconds=3){
-
-    for(let i=seconds;i>=1;i--){
-
-        showCountdown(i);
-
-        await new Promise(resolve=>
-            setTimeout(resolve,1000)
-        );
-
-    }
-
-    hideCountdown();
-
-}
-
-
-
-function capturePhoto(){
-
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-
-    ctx.save();
-
-    /*
-    mirror agar hasil sama
-    dengan preview kamera depan
-    */
-
-    ctx.translate(canvas.width,0);
-    ctx.scale(-1,1);
-
-    ctx.drawImage(
-        video,
-        0,
-        0,
-        canvas.width,
-        canvas.height
-    );
-
-    ctx.restore();
-
-    return canvas.toDataURL(
-        "image/png",
-        1
-    );
-
-}
-
-
-
-function placeFramePreview(index,imageData){
-
-    const img = document.createElement("img");
-
-    img.src = imageData;
-
-    frameElements[index].innerHTML = "";
-
-    frameElements[index].appendChild(img);
-
-}
-
-
-
-async function takeFourPhotos(){
-
-    capturedPhotos.length = 0;
-
-    startBtn.disabled = true;
-
-    statusText.textContent =
-        "Bersiap mengambil foto...";
-
-    for(let i=0;i<4;i++){
-
-        statusText.textContent =
-            `Foto ${i+1} dari 4`;
-
-        await runCountdown(3);
-
-        triggerFlash();
-
-        const photo = capturePhoto();
-
-        capturedPhotos.push(photo);
-
-        placeFramePreview(i,photo);
-
-        await new Promise(resolve=>
-            setTimeout(resolve,400)
-        );
-
-    }
-
-    statusText.textContent =
-        "Membuat photostrip...";
-
-    createPhotostrip();
-
-}
-
-
-
-startBtn.addEventListener(
-
-    "click",
-
-    async ()=>{
-
-        if(!video.videoWidth){
-
-            alert(
-                "Tunggu kamera selesai dimuat."
-            );
-
-            return;
-        }
-
-        frameElements.forEach((frame,index)=>{
-
-            frame.innerHTML =
-                `Foto ${index+1}`;
-
-        });
-
-        capturedPhotos.length = 0;
-
-        await takeFourPhotos();
-
-    }
-
-);
-
-const stripPreview =
-    document.getElementById("stripPreview");
-
-const downloadBtn =
-    document.getElementById("downloadBtn");
-
-let finalStripData = null;
-
-
-
-async function loadImage(src){
-
-    return new Promise((resolve)=>{
-
-        const img = new Image();
-
-        img.onload = ()=>resolve(img);
-
-        img.src = src;
-
-    });
-
-}
-
-
-
-async function createPhotostrip(){
-
-    /*
-    ukuran photostrip
-    rasio 3:4
-    */
-
-    const stripWidth = 900;
-    const stripHeight = 1200;
-
-    const outputCanvas =
-        document.createElement("canvas");
-
-    outputCanvas.width = stripWidth;
-    outputCanvas.height = stripHeight;
-
-    const c =
-        outputCanvas.getContext("2d");
-
-
-
-    /*
-    background butter yellow
-    */
-
-    c.fillStyle = "#FFF4B8";
-    c.fillRect(
-        0,
-        0,
-        stripWidth,
-        stripHeight
-    );
-
-
-
-    /*
-    polkadot pink
-    */
-
-    c.fillStyle =
-        "rgba(246,184,200,.85)";
-
-    for(let y=40;y<stripHeight;y+=80){
-
-        for(let x=40;x<stripWidth;x+=80){
-
-            c.beginPath();
-
-            c.arc(
-                x,
-                y,
-                8,
-                0,
-                Math.PI*2
-            );
-
-            c.fill();
-
-        }
-
-    }
-
-
-
-    /*
-    header
-    */
-
-    c.fillStyle = "#555";
-
-    c.textAlign = "center";
-
-    c.font =
-        "bold 54px Fredoka, sans-serif";
-
-    c.fillText(
-        "Say Cheese!",
-        stripWidth/2,
-        95
-    );
-
-
-
-    const photoAreaTop = 140;
-
-    const sidePadding = 55;
-
-    const photoGap = 22;
-
-    const photoWidth =
-        stripWidth - (sidePadding*2);
-
-    const photoHeight = 210;
-
-
-
-    for(let i=0;i<4;i++){
-
-        const img =
-            await loadImage(
-                capturedPhotos[i]
-            );
-
-        const y =
-            photoAreaTop +
-            (photoHeight + photoGap)*i;
-
-
-
-        /*
-        frame putih
-        */
-
-        c.fillStyle = "#fff";
-
-        c.beginPath();
-
-        c.roundRect(
-            sidePadding-8,
-            y-8,
-            photoWidth+16,
-            photoHeight+16,
-            18
-        );
-
-        c.fill();
-
-
-
-        /*
-        gambar
-        */
-
-        c.drawImage(
-            img,
-            sidePadding,
-            y,
-            photoWidth,
-            photoHeight
-        );
-
-    }
-
-
-
-    /*
-    footer kecil
-    */
-
-    c.fillStyle = "#666";
-
-    c.font =
-        "28px Fredoka, sans-serif";
-
-    c.fillText(
-        new Date().toLocaleDateString(),
-        stripWidth/2,
-        stripHeight-40
-    );
-
-
-
-    finalStripData =
-        outputCanvas.toDataURL(
-            "image/png",
-            1
-        );
-
-
-
-    stripPreview.src =
-        finalStripData;
-
-    stripPreview.style.display =
-        "block";
-
-    downloadBtn.style.display =
-        "block";
-
-
-
-    statusText.textContent =
-        "Photostrip selesai ✨";
-
-    startBtn.disabled = false;
-
-}
-
-
-
-downloadBtn.addEventListener(
-
-    "click",
-
-    ()=>{
-
-        if(!finalStripData) return;
-
-        const a =
-            document.createElement("a");
-
-        a.href =
-            finalStripData;
-
-        a.download =
-            "say-cheese-photobooth.png";
-
-        document.body.appendChild(a);
-
-        a.click();
-
-        document.body.removeChild(a);
-
-    }
-
-);
-
+document.getElementById('startBtn').onclick=startSession;
+
+document.getElementById('downloadBtn').onclick=()=>{
+ const a=document.createElement("a");
+ a.href=result.toDataURL("image/png");
+ a.download="qiephotobooth-premium.png";
+ a.click();
+};
 </script>
-
 </body>
 </html>
