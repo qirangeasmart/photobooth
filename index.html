@@ -1,125 +1,175 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Photobooth Online</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>qiephotobooth</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
 
 <style>
-body{
-  font-family: Arial, sans-serif;
-  text-align:center;
-  background:#f2f2f2;
-  padding:20px;
-}
+  body{
+    margin:0;
+    font-family:Poppins;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    background: linear-gradient(135deg,#fdfbfb,#ebedee,#dfe9f3);
+  }
 
-h1{
-  color:#333;
-}
+  h1{
+    font-size:22px;
+    margin:10px;
+  }
 
-video,canvas{
-  width:350px;
-  max-width:100%;
-  border-radius:15px;
-  border:5px solid white;
-  box-shadow:0 0 10px rgba(0,0,0,0.2);
-}
+  video{
+    width:280px;
+    border-radius:20px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.15);
+  }
 
-button{
-  margin:10px;
-  padding:12px 20px;
-  border:none;
-  border-radius:8px;
-  cursor:pointer;
-  color:white;
-  font-size:16px;
-}
+  .controls{
+    margin:10px;
+  }
 
-#fotoBtn{
-  background:#2196F3;
-}
+  button, select{
+    padding:10px;
+    margin:5px;
+    border:none;
+    border-radius:10px;
+    font-weight:600;
+  }
 
-#downloadBtn{
-  background:#4CAF50;
-}
+  button{
+    cursor:pointer;
+    background:#111;
+    color:white;
+  }
+
+  select{
+    background:white;
+  }
+
+  canvas{display:none;}
+
+  .preview{
+    margin-top:10px;
+  }
+
+  img{
+    width:220px;
+    border-radius:10px;
+    box-shadow:0 10px 20px rgba(0,0,0,0.15);
+  }
 </style>
-
 </head>
+
 <body>
 
-<h1>📸 Photobooth Gratis</h1>
+<h1>📸 Aesthetic Photobooth</h1>
 
-<video id="video" autoplay playsinline></video>
+<video id="video" autoplay></video>
 
-<br>
+<div class="controls">
+  <button onclick="startCam()">Start Camera</button>
+  <button onclick="takePhotos()">Take 4 Photos</button>
 
-<canvas id="canvas" style="display:none;"></canvas>
+  <select id="frameStyle">
+    <option value="white">Clean White</option>
+    <option value="black">Minimal Black</option>
+    <option value="polaroid">Polaroid Soft</option>
+    <option value="film">Film Grain</option>
+  </select>
 
-<br>
+  <button onclick="download()">Download</button>
+</div>
 
-<button id="fotoBtn" onclick="ambilFoto()">
-Ambil Foto
-</button>
+<canvas id="canvas"></canvas>
+<canvas id="final"></canvas>
 
-<button id="downloadBtn" onclick="downloadFoto()">
-Download
-</button>
+<div class="preview">
+  <img id="result"/>
+</div>
 
 <script>
+let video = document.getElementById("video");
+let photos = [];
 
-const video = document.getElementById("video");
-const canvas = document.getElementById("canvas");
-
-navigator.mediaDevices.getUserMedia({
-  video:true
-})
-.then(stream=>{
-  video.srcObject = stream;
-})
-.catch(()=>{
-  alert("Kamera tidak bisa dibuka");
-});
-
-function ambilFoto(){
-
-  canvas.style.display = "block";
-
-  canvas.width = video.videoWidth;
-  canvas.height = video.videoHeight;
-
-  const ctx = canvas.getContext("2d");
-
-  ctx.drawImage(video,0,0);
-
-  ctx.lineWidth = 20;
-  ctx.strokeStyle = "white";
-  ctx.strokeRect(
-    0,
-    0,
-    canvas.width,
-    canvas.height
-  );
-
-  ctx.fillStyle = "white";
-  ctx.font = "28px Arial";
-  ctx.fillText(
-    "Photobooth",
-    20,
-    canvas.height - 20
-  );
+function startCam(){
+  navigator.mediaDevices.getUserMedia({video:true})
+  .then(stream => video.srcObject = stream);
 }
 
-function downloadFoto(){
+function snap(){
+  let c = document.getElementById("canvas");
+  c.width = 300;
+  c.height = 300;
+  let ctx = c.getContext("2d");
 
-  const link = document.createElement("a");
+  ctx.drawImage(video,0,0,300,300);
+  return c.toDataURL("image/png");
+}
 
+async function takePhotos(){
+  photos = [];
+  for(let i=0;i<4;i++){
+    photos.push(snap());
+    await new Promise(r=>setTimeout(r,600));
+  }
+  drawFinal();
+}
+
+function drawFinal(){
+  let style = document.getElementById("frameStyle").value;
+  let c = document.getElementById("final");
+  c.width = 300;
+  c.height = 600;
+
+  let ctx = c.getContext("2d");
+
+  // background style frame
+  if(style==="black") ctx.fillStyle="#111";
+  else ctx.fillStyle="#fff";
+  ctx.fillRect(0,0,c.width,c.height);
+
+  // spacing
+  let size = 140;
+  let pad = 10;
+
+  photos.forEach((src,i)=>{
+    let img = new Image();
+    img.src = src;
+    img.onload = ()=>{
+      let x = (i%2)*(size+pad)+pad;
+      let y = Math.floor(i/2)*(size+pad)+pad;
+
+      ctx.drawImage(img,x,y,size,size);
+
+      // polaroid frame
+      if(style==="polaroid"){
+        ctx.fillStyle="white";
+        ctx.fillRect(x,y,size,size+20);
+      }
+
+      // film overlay
+      if(style==="film"){
+        ctx.fillStyle="rgba(0,0,0,0.2)";
+        ctx.fillRect(x,y,size,size);
+      }
+
+      document.getElementById("result").src = c.toDataURL();
+    }
+  });
+}
+
+function download(){
+  let link = document.createElement("a");
   link.download = "photobooth.png";
-
-  link.href = canvas.toDataURL();
-
+  link.href = document.getElementById("final").toDataURL();
   link.click();
 }
-
 </script>
 
 </body>
