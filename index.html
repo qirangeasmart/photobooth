@@ -3,203 +3,135 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Qie Photobooth Premium v2</title>
+<title>Qie Photobooth</title>
 <style>
-:root{
- --bg:#fff6b8;
- --pink:#ff7eb6;
- --card:#fffdf8;
-}
-*{box-sizing:border-box}
 body{
- margin:0;
- font-family:Arial,sans-serif;
- min-height:100vh;
- background:
- radial-gradient(circle at 20px 20px,#ff9cc8 8px,transparent 9px),
- radial-gradient(circle at 80px 80px,#ff9cc8 8px,transparent 9px),
- var(--bg);
- background-size:100px 100px;
- display:flex;
- justify-content:center;
- padding:20px;
+margin:0;font-family:Arial,sans-serif;
+background-color:#fff3a6;
+background-image:
+radial-gradient(#ff8fb1 3px, transparent 3px),
+radial-gradient(#ff8fb1 3px, transparent 3px);
+background-size:40px 40px;
+background-position:0 0,20px 20px;
 }
-.wrap{
- width:min(1100px,100%);
- background:rgba(255,255,255,.75);
- backdrop-filter:blur(8px);
- border-radius:28px;
- padding:20px;
- box-shadow:0 10px 30px rgba(0,0,0,.15);
-}
-h1{text-align:center;color:#ff4f97}
-.controls{
- display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:15px;
-}
-button,select{
- border:none;border-radius:999px;padding:12px 18px;font-weight:bold;
-}
-button{cursor:pointer}
-video{
- width:100%;max-width:650px;border-radius:20px;
- transform:scaleX(-1);
- display:block;margin:auto;
-}
-.center{text-align:center}
-#countdown{font-size:64px;font-weight:bold;color:#ff4f97}
-.frame-preview{
- width:48px;height:70px;border-radius:8px;display:inline-block;margin:3px;border:2px solid #ddd;
-}
-canvas{display:none}
+h1{text-align:center;margin:20px;color:#444}
+.wrap{max-width:1100px;margin:auto;padding:15px}
+.grid{display:grid;grid-template-columns:1fr 320px;gap:20px}
+.card{background:#fff;border-radius:20px;padding:15px;box-shadow:0 4px 12px rgba(0,0,0,.12)}
+video{width:100%;border-radius:15px;transform:scaleX(-1)}
+.controls{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+button,select{padding:10px;border-radius:10px;border:1px solid #ccc}
+#count{font-size:48px;text-align:center;font-weight:bold}
+.frames{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.frame{aspect-ratio:4/3;background:#eee;border-radius:10px;overflow:hidden}
+.frame img{width:100%;height:100%;object-fit:cover}
+#result{max-width:100%;display:none}
+@media(max-width:800px){.grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 <div class="wrap">
-<h1>📸 Say Cheese! ✨</h1>
-
+<h1>📸 Say Cheese!</h1>
+<div class="grid">
+<div class="card">
+<video id="video" autoplay playsinline muted></video>
+<div id="count"></div>
 <div class="controls">
-<select id="frame">
+<button id="start">Start</button>
+<label><input type="checkbox" id="flash" checked> Flash ON</label>
+<select id="frameStyle">
 <option value="white">White</option>
 <option value="black">Black</option>
 <option value="maroon">Maroon</option>
 <option value="yellow">Pastel Yellow</option>
 <option value="dots">Black Polkadot</option>
 </select>
-
-<button id="flashBtn">Flash: OFF</button>
-<button id="startBtn">Start Session</button>
-<button id="downloadBtn" disabled>Download Strip</button>
 </div>
-
-<video id="video" autoplay playsinline></video>
-<div id="countdown" class="center"></div>
-
-<canvas id="capture"></canvas>
-<canvas id="result"></canvas>
 </div>
-
+<div class="card">
+<div class="frames">
+<div class="frame" id="f1"></div>
+<div class="frame" id="f2"></div>
+<div class="frame" id="f3"></div>
+<div class="frame" id="f4"></div>
+</div>
+<hr>
+<img id="result">
+<br><button id="download" style="display:none">Download PNG</button>
+</div>
+</div>
+</div>
 <script>
 const video=document.getElementById('video');
-const capture=document.getElementById('capture');
-const result=document.getElementById('result');
-const ctxCap=capture.getContext('2d');
-const ctxRes=result.getContext('2d');
+const count=document.getElementById('count');
+const photos=[];
+let finalData='';
 
-let photos=[];
-let flash=false;
+navigator.mediaDevices.getUserMedia({video:{facingMode:'user'}})
+.then(s=>video.srcObject=s);
 
-document.getElementById('flashBtn').onclick=()=>{
- flash=!flash;
- document.getElementById('flashBtn').textContent="Flash: "+(flash?"ON":"OFF");
-};
+function wait(ms){return new Promise(r=>setTimeout(r,ms));}
 
-navigator.mediaDevices.getUserMedia({video:{facingMode:"user"}})
-.then(stream=>video.srcObject=stream);
-
-function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
-
-async function startSession(){
- photos=[];
-
- for(let i=0;i<4;i++){
-   for(let c=3;c>=1;c--){
-     countdown.textContent=c;
-     await sleep(1000);
-   }
-   countdown.textContent="📸";
-
-   if(flash){
-      const f=document.createElement("div");
-      f.style.cssText="position:fixed;inset:0;background:white;z-index:9999";
-      document.body.appendChild(f);
-      setTimeout(()=>f.remove(),120);
-   }
-
-   capture.width=video.videoWidth;
-   capture.height=video.videoHeight;
-
-   ctxCap.save();
-   ctxCap.scale(-1,1);
-   ctxCap.drawImage(video,-capture.width,0,capture.width,capture.height);
-   ctxCap.restore();
-
-   photos.push(capture.toDataURL("image/png"));
-   await sleep(600);
- }
-
- countdown.textContent="Done ✨";
- makeStrip();
+async function shot(){
+for(let i=0;i<4;i++){
+for(let n=3;n>0;n--){count.textContent=n;await wait(1000);}
+count.textContent='';
+if(document.getElementById('flash').checked){
+const d=document.createElement('div');
+d.style='position:fixed;inset:0;background:white;z-index:999';
+document.body.appendChild(d);
+setTimeout(()=>d.remove(),150);
+}
+const c=document.createElement('canvas');
+c.width=video.videoWidth;c.height=video.videoHeight;
+const x=c.getContext('2d');
+x.translate(c.width,0);x.scale(-1,1);
+x.drawImage(video,0,0);
+const data=c.toDataURL('image/png');
+photos[i]=data;
+document.getElementById('f'+(i+1)).innerHTML='<img src="'+data+'">';
+await wait(300);
+}
+makeStrip();
 }
 
-function frameColor(){
- const v=document.getElementById("frame").value;
- if(v==="white") return "#fff";
- if(v==="black") return "#111";
- if(v==="maroon") return "#6b1022";
- if(v==="yellow") return "#fff1a8";
- return "dots";
+async function makeStrip(){
+const c=document.createElement('canvas');
+c.width=1200;c.height=900;
+const x=c.getContext('2d');
+
+let style=document.getElementById('frameStyle').value;
+if(style==='white') x.fillStyle='#fff';
+if(style==='black') x.fillStyle='#111';
+if(style==='maroon') x.fillStyle='#6b1f2a';
+if(style==='yellow') x.fillStyle='#fff1a8';
+if(style==='dots'){
+x.fillStyle='#111';x.fillRect(0,0,c.width,c.height);
+x.fillStyle='#fff';
+for(let yy=20;yy<900;yy+=30){for(let xx=20;xx<1200;xx+=30){x.beginPath();x.arc(xx,yy,3,0,7);x.fill();}}
+}else{x.fillRect(0,0,c.width,c.height);}
+
+const pos=[[60,60],[630,60],[60,430],[630,430]];
+for(let i=0;i<4;i++){
+const img=new Image();
+await new Promise(res=>{img.onload=res;img.src=photos[i]});
+x.drawImage(img,pos[i][0],pos[i][1],510,300);
+}
+x.font='24px Arial';
+x.fillStyle=(style==='white'||style==='yellow')?'#444':'#fff';
+x.textAlign='right';
+x.fillText('qiephotobooth',1160,870);
+
+finalData=c.toDataURL('image/png');
+document.getElementById('result').src=finalData;
+document.getElementById('result').style.display='block';
+document.getElementById('download').style.display='inline-block';
 }
 
-function makeStrip(){
- const W=1000,H=1400;
- result.width=W;
- result.height=H;
-
- const frame=frameColor();
-
- if(frame==="dots"){
-   ctxRes.fillStyle="#111";
-   ctxRes.fillRect(0,0,W,H);
-   ctxRes.fillStyle="#fff";
-   for(let x=25;x<W;x+=50){
-    for(let y=25;y<H;y+=50){
-      ctxRes.beginPath();
-      ctxRes.arc(x,y,6,0,Math.PI*2);
-      ctxRes.fill();
-    }
-   }
- }else{
-   ctxRes.fillStyle=frame;
-   ctxRes.fillRect(0,0,W,H);
- }
-
- let loaded=0;
- const imgs=[];
-
- photos.forEach((src,i)=>{
-   const img=new Image();
-   img.onload=()=>{
-      imgs[i]=img;
-      loaded++;
-      if(loaded===4){
-        const pos=[
-         [70,110],[520,110],
-         [70,700],[520,700]
-        ];
-
-        pos.forEach((p,j)=>{
-          ctxRes.drawImage(imgs[j],p[0],p[1],400,500);
-        });
-
-        ctxRes.fillStyle="#ff5f9e";
-        ctxRes.font="bold 42px Arial";
-        ctxRes.textAlign="center";
-        ctxRes.fillText("qiephotobooth",W/2,H-50);
-
-        document.getElementById("downloadBtn").disabled=false;
-      }
-   };
-   img.src=src;
- });
-}
-
-document.getElementById('startBtn').onclick=startSession;
-
-document.getElementById('downloadBtn').onclick=()=>{
- const a=document.createElement("a");
- a.href=result.toDataURL("image/png");
- a.download="qiephotobooth-premium.png";
- a.click();
+document.getElementById('start').onclick=()=>{photos.length=0;shot();};
+document.getElementById('download').onclick=()=>{
+const a=document.createElement('a');
+a.href=finalData;a.download='qiephotobooth.png';a.click();
 };
 </script>
 </body>
