@@ -1,444 +1,957 @@
-<think>
-Here's a thinking process that leads to the suggested HTML/JS/CSS photobooth code:
-
-1.  **Analyze the Request:**
-
-    *   **Goal:** Create a Photobooth web app (HTML/CSS/JS).
-    *   **Theme:** Playful, pastel polka dots (pink yellow), "Say Cheese" text at the top (main background only), distinct watermark "qiephotobooth" in Papyrus font on photos (no date).
-    *   **Layout:**
-        *   4 Frames (Grid 2x2).
-        *   Aspect Ratio: 4:3.
-        *   Total Output Resolution: HD 3000x2250.
-    *   **Features:**
-        *   Timer: 3 seconds per frame.
-        *   Camera: Front-facing, mirrored (inverted).
-        *   Flash: Toggle on/off.
-        *   Frame Color Selection: White, Black, Maroon, Pastel Yellow, Black with White Polka Dots.
-        *   Live Preview/Retake: Show result after countdown so user can retake.
-        *   Visual Frame Selector (thumbnails).
-        *   Shutter Animation.
-        *   Responsive: Works on Mobile, Laptop, any device.
-    *   **Constraints:**
-        *   *No* "Say Cheese" text on the final merged photo.
-        *   *No* stretching/squashing (must maintain correct aspect ratio).
-        *   Papyrus font for watermark.
-
-2.  **Technical Strategy:**
-
-    *   **Languages:** HTML5, CSS3, JavaScript (Vanilla).
-    *   **Camera Access:** `navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } })`.
-    *   **Canvas API:** Essential for capturing frames, merging them, handling the timer, applying the mirror effect, and drawing the frame/border.
-    *   **CSS Framework:** None (Vanilla is better for performance and customization here), but Flexbox/Grid will be used for layout.
-    *   **Assets:** I need to generate the polka dot background via CSS or SVG to keep it single-file. Papyrus font is standard on many systems, but I should provide a fallback or web font link (though usually standard `font-family: 'Papyrus', fantasy` works okay).
-
-3.  **Step-by-Step Implementation Plan:**
-
-    *   **Step 1: Structure (HTML):**
-        *   Container.
-        *   Header ("Say Cheese").
-        *   Video Preview Area (The "Viewfinder").
-        *   Controls (Timer, Flash, Frame Selector, Capture Button).
-        *   Overlay (Shutter effect).
-        *   Results Area (Hidden initially, shows merged photo + Retake/Download).
-
-    *   **Step 2: Styling (CSS):**
-        *   Pastel Polka Dot background (Yellow/Pink).
-        *   Responsive layout (flex/grid).
-        *   Video sizing to ensure 4:3 aspect ratio without stretching.
-        *   Animations (Countdown pulse, Shutter slide-down).
-
-    *   **Step 3: Logic (JS):**
-        *   *Init:* Request Camera.
-        *   *State:* Current frame index (0-3), Timer running boolean, Flash setting.
-        *   *Loop:* Capture video stream to a hidden canvas for live preview (mirrored).
-        *   *Capture Sequence:*
-            *   User clicks "Capture".
-            *   3-second countdown (3...2...1...).
-            *   Flash fires (screen white out briefly).
-            *   Capture image to memory.
-            *   Retake? -> Back to live. Keep? -> Next slot.
-        *   *Merging:* Once 4 photos are taken, draw them onto a large canvas (3000x2250) with the selected border style.
-        *   *Watermark:* Draw "qiephotobooth" in Papyrus.
-        *   *Download:* Convert canvas to Blob/DataURL.
-
-4.  **Refining Specific Requirements:**
-
-    *   *Inverted Camera:* CSS `transform: scaleX(-1)` on the <video> element. Note: When capturing to canvas/drawing to the final image, we *must* mirror the data programmatically so the result isn't backward.
-    *   *Frame Selector:* Need HTML buttons for the colors. "Polka Dot" logic implies drawing dots on the canvas context if that option is selected.
-    *   *Retake Logic:* This is tricky. The prompt asks for "Preview of each photo + Retake". This implies:
-        1.  Take 1st photo -> Show Preview -> [Retake] or [Next].
-        2.  Take 2nd... etc.
-        *Correction:* Standard photobooths usually take all 4 in sequence then show result. However, the prompt says "pas lagi countdown setelah dijepret tampilkan jg foto hasilnya supaya bisa di retake" (During countdown, after snapping, show result for retake).
-        *Interpretation:* Hybrid approach. The "Viewfinder" shows the live feed. When the timer hits 0 -> Click -> Snapshot displayed over the feed or in a modal -> User chooses "Next/Keep" or "Retake".
-
-5.  **Drafting the Code (Mental or Scratchpad):**
-
-    *   *Canvas Sizing:*
-        *   Final output: 3000x2250 (4:3).
-        *   Split into a 2x2 grid. Each cell is 1500x1125.
-    *   *Polka Dot Logic:*
-        *   If "Black/Polka" selected, I need to loop through `ctx` and draw white circles before adding the photo. Actually, better to draw the frame background *behind* the photo masked.
-    *   *Flash:* CSS `background: white` on an overlay div for 200ms.
-
-6.  **Writing the Solution (Iterative refinement):**
-
-    *   *CSS Polka Dots:* Using radial-gradient for performance.
-    *   *JS Camera:* Need to handle `facingMode: 'user'` strictly.
-    *   *JS Mirror:* The live video is flipped. The captured image needs to be flipped back.
-    *   *Papyrus:* Add `'Papyrus', 'Fantasy', serif`.
-
-7.  **Addressing the "Retake per frame" vs "Sequence" complexity:**
-    To make it "sebagus mungkin" (as good as possible) and mobile-friendly:
-    *   User selects Frame Color.
-    *   User clicks "Mulai" (Start).
-    *   Frame 1: Countdown -> Flash -> Capture.
-    *   Show captured image (mirrored). Buttons: "Ulang" (Retake), "anjut" (Next).
-    *   Repeat for all 4.
-    *   Generate Final Montage.
-
-8.  **Final Code Structure Assembly:**
-
-    *   **HTML:** Single file structure.
-    *   **CSS:** Embedded.
-    *   **JS:** Embedded.
-    *   **Logic Check:**
-        *   Timer 3s? Yes.
-        *   4:3 aspect? Yes.
-        *   Front camera inverted? Yes (Mirror effect).
-        *   Flash toggle? Yes.
-        *   No "Say Cheese" on photo? Yes.
-        *   Papyrus text? Yes.
-        *   No Date? Yes.
-        *   HD Export? Yes (3000x2250).
-        *   Responsive? Yes (Flex/Grid).
-
-9.  **Refining the Aesthetics:**
-    *   Buttons need to look "playful" (rounded, pastel colors).
-    *   Typography needs to match the "Say Cheese" vibe.
-
-10. **Self-Correction during coding:**
-    *   *Issue:* Mobile browsers often block camera if not served over HTTPS. *Note to user:* Must run on HTTPS or localhost.
-    *   *Issue:* The "Polka Dot" frame requires canvas drawing.
-    *   *Issue:* Retake functionality means I need to store temporary images in an array `tempFrames`.
-
-11. **Final Polish:** Ensure the layout looks exactly like the description (Preview screen -> Camera -> Overlay -> Result).
-
-**(Self-Correction on Output Resolution):** 3000x2250 is huge. On mobile, this might crash the browser if not handled well. I will implement it, but I'll keep the internal processing efficient.
-
-**(Code Construction -> Output):** Proceed to generate the HTML string. I will write the CSS to handle the "fanta" (pastel) look and the JS to handle the state machine (Select Frame -> Frame 1 -> Review -> Frame 2... -> Finish -> Merge).
-
-*Let's write the code.* (This involves writing the JS logic for the countdown, the mirroring, the canvas composition, and the download handler).
-
-*Design Check:*
-- Background: Yellow/Pink pastel polkadot.
-- Overlay text: "Say Cheese" only on the main UI.
-- Output: 4 grid, "qiephotobooth" on output.
-
-*Implementation Details for "Polka Black":*
-Fill black. Draw white circles randomly or in a grid on the canvas border.
-
-*Result:* The code provided below.
-</think> adalah kode HTML lengkap (single file) yang sudah sayaoptimalkan. Kamu bisa langsung menyalin kode ini menjadi file `.html` (misalnya `photobooth.html`) dan membukanya di browser.
-
-**Catatan Penting:** Untuk menggunakan kamera diHP/Laptop, browser modern mengharuskan halaman ini diakses melalui **HTTPS** atau **Localhost**. Jika kamu membuka file HTML ini langsung dengan double-click (file://), kamera mungkin tidak mau menyala karena kebijakan keamanan browser.
-
-### Fitur Utama Kode Ini:
-1.  **Desain Responsif:** Menyesuaikan layarHP, Laptop, dan Tablet.
-2.  **Layout 4:3 (Grid 2x2):** Hasil akhir 3000x2250 px (HD).
-3.  **Countdown 3 Detik:** Dengan animasi shuffle numbers yang cantik.
-4.  **Live Preview & Retake:** Setelah foto diambil, muncul hasil foto agar bisa di "Ulang" atau lanjut ke frame berikutnya.
-5.  **Frame Selector:** Putih, Hitam, Maroon, Kuning Pastel, dan Hitam Polkadot.
-6.  **Mirror Effect:** Kamera depan terlihat normal (tidak terbalik) di layar, dan data yang disimpan juga sudah di-mirror ulang.
-7.  **Flash & Sfx:** Efek kilatan dan animasi shutter.
-8.  **Theme:** Pastel Fanta polkadot background dengan font啼秋 baru.
-
-```html
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Qie Photobooth - Pastel Playful</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Papyrus&display=swap');
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        :root {
-            --primary: #FF6B6B; /* Pastel Red/Orange */
-            --yellow: #FFD93D;
-            --pink: #FF9FF3;
-            --bg-dot-size: 20px;
-        }
+<title>Qie Photobooth</title>
 
-        * {
-            box-sizing: border-box;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
-        }
+<link href="https://fonts.googleapis.com/css2?family=Chewy&family=Patrick+Hand&display=swap" rel="stylesheet">
 
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Fredoka One', cursive, sans-serif;
-            background-color: #fdfd96; /* Pastel Yellow base */
-            background-image: radial-gradient(var(--pink) 15%, transparent 16%),
-                            radial-gradient(var(--pink) 15%, transparent 16%);
-            background-size: var(--bg-dot-size) var(--bg-dot-size);
-            background-position: 0 0, 10px 10px;
-            height: 100vh;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            color: #333;
-        }
+<style>
 
-        /* Header Text */
-        header {
-            padding: 15px;
-            text-align: center;
-            width: 100%;
-            z-index: 10;
-        }
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
 
-        h1 {
-            margin: 0;
-            font-size: 2.5rem;
-            color: #FF6B6B;
-            text-shadow: 2px 2px 0px #fff, 4px 4px 0px #FFD93D;
-            font-family: 'Fredoka One', cursive;
-            letter-spacing: 2px;
-        }
+body{
+font-family:'Patrick Hand',cursive;
+min-height:100vh;
+overflow-x:hidden;
 
-        /* Main Stage */
-        #stage {
-            position: relative;
-            width: 100%;
-            max-width: 500px;
-            flex-grow: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-        }
+background:
+radial-gradient(circle,#ff7eb6 4px,transparent 4px),
+#FFF5B8;
 
-        /* Camera Video */
-        video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 10px;
-            transform: scaleX(-1); /* Mirror effect for user */
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-            background: #000;
-        }
+background-size:40px 40px;
+}
 
-        /* Canvas for Capturing (Hidden) */
-        canvas {
-            display: none;
-        }
+.header{
+text-align:center;
+padding:20px;
+}
 
-        /* Shutter Animation Overlay */
-        #shutter-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: white;
-            opacity: 0;
-            pointer-events: none;
-            z-index: 20;
-            border-radius: 10px;
-            transition: opacity 0.1s;
-        }
+.header h1{
+font-family:'Chewy',cursive;
+font-size:3rem;
+color:#ff4fa3;
+letter-spacing:3px;
+text-shadow:
+3px 3px 0 white,
+5px 5px 0 rgba(0,0,0,.1);
+}
 
-        /* Countdown Display */
-        #countdown {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 8rem;
-            color: white;
-            text-shadow: 0 0 20px rgba(255,255,255,0.8);
-            z-index: 15;
-            display: none;
-            pointer-events: none;
-        }
+.container{
+max-width:1200px;
+margin:auto;
+padding:20px;
+display:flex;
+gap:30px;
+flex-wrap:wrap;
+justify-content:center;
+align-items:flex-start;
+}
 
-        /* Retake/Preview Modal */
-        #preview-modal {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.9);
-            z-index: 30;
-            display: none;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
+.left-panel{
+width:420px;
+max-width:95vw;
+}
 
-        #preview-modal img {
-            width: 100%;
-            max-height: 60vh;
-            object-fit: contain;
-            border: 5px solid white;
-            border-radius: 5px;
-            transform: scaleX(-1); /* Show mirrored result */
-        }
+.camera-box{
+position:relative;
+border-radius:25px;
+overflow:hidden;
+background:white;
+box-shadow:
+0 15px 40px rgba(0,0,0,.15);
+}
 
-        .modal-title {
-            color: white;
-            margin-bottom: 10px;
-            font-size: 1.2rem;
-        }
+video{
+width:100%;
+aspect-ratio:4/3;
+object-fit:cover;
+transform:scaleX(-1);
+display:block;
+}
 
-        .btn-group {
-            margin-top: 20px;
-            display: flex;
-            gap: 20px;
-        }
+.flash{
+position:absolute;
+inset:0;
+background:white;
+opacity:0;
+pointer-events:none;
+}
 
-        /* Controls */
-        #controls {
-            width: 100%;
-            max-width: 500px;
-            background: white;
-            padding: 15px;
-            border-top-left-radius: 20px;
-            border-top-right-radius: 20px;
-            box-shadow: 0 -5px 20px rgba(0,0,0,0.1);
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            z-index: 11;
-        }
+.flash.active{
+animation:flashAnim .4s;
+}
 
-        /* Frame Selector */
-        .frame-options {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            overflow-x: auto;
-            padding-bottom: 5px;
-        }
+@keyframes flashAnim{
+0%{opacity:1;}
+100%{opacity:0;}
+}
 
-        .frame-btn {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            border: 3px solid transparent;
-            cursor: pointer;
-            flex-shrink: 0;
-            transition: transform 0.2s;
-        }
+.countdown{
+position:absolute;
+inset:0;
+display:flex;
+justify-content:center;
+align-items:center;
+font-size:120px;
+font-weight:bold;
+color:white;
+text-shadow:0 0 20px black;
+pointer-events:none;
+}
 
-        .frame-btn.active {
-            border-color: #333;
-            transform: scale(1.2);
-        }
+.controls{
+margin-top:15px;
+display:flex;
+flex-wrap:wrap;
+gap:10px;
+justify-content:center;
+}
 
-        .f-white { background: white; }
-        .f-black { background: #1a1a1a; }
-        .f-maroon { background: #800000; }
-        .f-yellow { background: #FFD93D; }
-        .f-polka { 
-            background: #1a1a1a; 
-            background-image: radial-gradient(white 20%, transparent 20%);
-            background-size: 10px 10px;
-        }
+button{
+border:none;
+cursor:pointer;
+padding:12px 18px;
+border-radius:15px;
+font-size:18px;
+font-family:'Patrick Hand';
+transition:.2s;
+}
 
-        /* Action Buttons */
-        .main-actions {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+button:hover{
+transform:translateY(-2px);
+}
 
-        .toggle-btn {
-            background: #eee;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 20px;
-            font-family: inherit;
-            font-size: 0.9rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
+.capture-btn{
+background:#ff5ca8;
+color:white;
+}
 
-        .toggle-btn.active {
-            background: #FFD93D;
-            color: #333;
-        }
+.retake-btn{
+background:#444;
+color:white;
+}
 
-        #capture-btn {
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            background: #FF6B6B;
-            border: 5px solid white;
-            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
-            cursor: pointer;
-            transition: transform 0.1s;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+.download-btn{
+background:#58c472;
+color:white;
+}
 
-        #capture-btn:active {
-            transform: scale(0.9);
-        }
+.flash-btn{
+background:#ffd84d;
+}
 
-        #capture-btn span {
-            display: block;
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            background: radial-gradient(circle, #ff8787 40%, #c92a2a 100%);
-        }
+.right-panel{
+width:350px;
+max-width:95vw;
+}
 
-        .step-indicator {
-            text-align: center;
-            font-size: 0.9rem;
-            color: #888;
-        }
+.section-title{
+font-size:1.4rem;
+margin-bottom:10px;
+}
 
-        /* Final Result Modal */
-        #final-result {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.95);
-            z-index: 100;
-            display: none;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
+.frame-options{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:12px;
+}
 
-        #final-result img {
-            width: 90%;
-            max-width: 600px;
-            border: 10px solid white;
-            box-shadow: 0 0 30px rgba(0,0,0,0.5);
-        }
+.frame-card{
+cursor:pointer;
+border-radius:15px;
+overflow:hidden;
+border:4px solid transparent;
+background:white;
+transition:.25s;
+}
 
-        .action-row {
-            margin-top: 20px;
-            display: flex;
-            gap: 15px;
-        }
+.frame-card.active{
+border-color:#ff4fa3;
+}
 
-        .bg-btn {
-            padding: 12px 25px;
-            border-radius: 30px;
-            border: none;
-            font-family:
+.thumb{
+height:110px;
+display:flex;
+justify-content:center;
+align-items:center;
+}
+
+.thumb-preview{
+width:70px;
+height:95px;
+display:grid;
+grid-template-columns:1fr 1fr;
+grid-template-rows:1fr 1fr;
+gap:3px;
+padding:6px;
+}
+
+.thumb-preview div{
+background:#ddd;
+}
+
+.label{
+text-align:center;
+padding:8px;
+font-size:17px;
+}
+
+.preview-grid{
+margin-top:20px;
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:10px;
+}
+
+.preview-slot{
+background:white;
+border-radius:15px;
+overflow:hidden;
+aspect-ratio:4/3;
+display:flex;
+justify-content:center;
+align-items:center;
+font-size:40px;
+box-shadow:0 5px 15px rgba(0,0,0,.08);
+}
+
+.preview-slot img{
+width:100%;
+height:100%;
+object-fit:cover;
+}
+
+canvas{
+display:none;
+}
+
+.shutter{
+position:fixed;
+inset:0;
+background:black;
+opacity:0;
+pointer-events:none;
+}
+
+.shutter.active{
+animation:shutterAnim .25s;
+}
+
+@keyframes shutterAnim{
+0%{opacity:0;}
+50%{opacity:1;}
+100%{opacity:0;}
+}
+
+@media(max-width:900px){
+
+.container{
+flex-direction:column;
+align-items:center;
+}
+
+.left-panel{
+width:100%;
+}
+
+.right-panel{
+width:100%;
+}
+
+}
+
+.white-frame{
+background:white;
+}
+
+.black-frame{
+background:black;
+}
+
+.maroon-frame{
+background:#5c0f24;
+}
+
+.yellow-frame{
+background:#fff4a3;
+}
+
+.polkadot-frame{
+background:
+radial-gradient(circle,#fff 3px,transparent 3px),
+#111;
+background-size:18px 18px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="header">
+<h1>SAY CHEESE ✨</h1>
+</div>
+
+<div class="container">
+
+<div class="left-panel">
+
+<div class="camera-box">
+
+<video id="video" autoplay playsinline></video>
+
+<div id="flash" class="flash"></div>
+
+<div id="countdown" class="countdown"></div>
+
+</div>
+
+<div class="controls">
+
+<button class="capture-btn" id="startBtn">
+📸 Start Booth
+</button>
+
+<button class="retake-btn" id="retakeAll">
+🔄 Retake All
+</button>
+
+<button class="flash-btn" id="flashToggle">
+⚡ Flash ON
+</button>
+
+<button class="download-btn" id="downloadBtn">
+⬇ Download
+</button>
+
+</div>
+
+</div>
+
+<div class="right-panel">
+
+<h2 class="section-title">
+🎨 Choose Frame
+</h2>
+
+<div class="frame-options">
+
+<div class="frame-card active" data-frame="white">
+<div class="thumb white-frame">
+<div class="thumb-preview">
+<div></div><div></div>
+<div></div><div></div>
+</div>
+</div>
+<div class="label">White</div>
+</div>
+
+<div class="frame-card" data-frame="black">
+<div class="thumb black-frame">
+<div class="thumb-preview">
+<div></div><div></div>
+<div></div><div></div>
+</div>
+</div>
+<div class="label">Black</div>
+</div>
+
+<div class="frame-card" data-frame="maroon">
+<div class="thumb maroon-frame">
+<div class="thumb-preview">
+<div></div><div></div>
+<div></div><div></div>
+</div>
+</div>
+<div class="label">Maroon</div>
+</div>
+
+<div class="frame-card" data-frame="yellow">
+<div class="thumb yellow-frame">
+<div class="thumb-preview">
+<div></div><div></div>
+<div></div><div></div>
+</div>
+</div>
+<div class="label">Pastel Yellow</div>
+</div>
+
+<div class="frame-card" data-frame="polkadot">
+<div class="thumb polkadot-frame">
+<div class="thumb-preview">
+<div></div><div></div>
+<div></div><div></div>
+</div>
+</div>
+<div class="label">Black Polkadot</div>
+</div>
+
+</div>
+
+<h2 style="margin-top:25px;">
+🖼 Preview Frames
+</h2>
+
+<div class="preview-grid">
+
+<div class="preview-slot" id="slot0">1</div>
+
+<div class="preview-slot" id="slot1">2</div>
+
+<div class="preview-slot" id="slot2">3</div>
+
+<div class="preview-slot" id="slot3">4</div>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="shutter" id="shutter"></div>
+
+<canvas id="captureCanvas"></canvas>
+<canvas id="finalCanvas"></canvas>
+
+<script>
+   
+const video = document.getElementById("video");
+const countdown = document.getElementById("countdown");
+const flash = document.getElementById("flash");
+const shutter = document.getElementById("shutter");
+
+const startBtn = document.getElementById("startBtn");
+const flashToggle = document.getElementById("flashToggle");
+const retakeAll = document.getElementById("retakeAll");
+
+const canvas = document.getElementById("captureCanvas");
+const ctx = canvas.getContext("2d");
+
+let capturedFrames = [];
+let currentFrame = 0;
+let flashEnabled = true;
+let isCapturing = false;
+
+async function startCamera(){
+
+try{
+
+const stream = await navigator.mediaDevices.getUserMedia({
+video:{
+facingMode:"user",
+width:{ideal:1280},
+height:{ideal:960}
+},
+audio:false
+});
+
+video.srcObject = stream;
+
+}catch(err){
+
+alert("Camera tidak dapat diakses.");
+
+console.error(err);
+
+}
+
+}
+
+startCamera();
+
+flashToggle.addEventListener("click",()=>{
+
+flashEnabled = !flashEnabled;
+
+flashToggle.textContent = flashEnabled
+? "⚡ Flash ON"
+: "⚡ Flash OFF";
+
+});
+
+retakeAll.addEventListener("click",()=>{
+
+capturedFrames = [];
+currentFrame = 0;
+
+for(let i=0;i<4;i++){
+
+const slot = document.getElementById(`slot${i}`);
+
+slot.innerHTML = i+1;
+
+}
+
+});
+
+startBtn.addEventListener("click",async()=>{
+
+if(isCapturing) return;
+
+if(currentFrame >= 4){
+
+alert("4 frame sudah penuh. Klik Retake All atau Download.");
+
+return;
+
+}
+
+isCapturing = true;
+
+await captureSequence();
+
+isCapturing = false;
+
+});
+
+async function captureSequence(){
+
+for(let i=currentFrame;i<4;i++){
+
+const proceed = await countdownCapture(i);
+
+if(!proceed) break;
+
+currentFrame++;
+
+const lanjut = await showRetakeDialog(i);
+
+if(!lanjut){
+
+currentFrame--;
+
+capturedFrames.pop();
+
+const slot = document.getElementById(`slot${i}`);
+
+slot.innerHTML = i+1;
+
+break;
+
+}
+
+}
+
+}
+
+async function countdownCapture(frameIndex){
+
+for(let sec=3;sec>0;sec--){
+
+countdown.textContent = sec;
+
+await wait(1000);
+
+}
+
+countdown.textContent = "";
+
+captureFrame(frameIndex);
+
+return true;
+
+}
+
+function captureFrame(frameIndex){
+
+canvas.width = video.videoWidth;
+canvas.height = video.videoHeight;
+
+ctx.save();
+
+ctx.translate(canvas.width,0);
+ctx.scale(-1,1);
+
+ctx.drawImage(
+video,
+0,
+0,
+canvas.width,
+canvas.height
+);
+
+ctx.restore();
+
+if(flashEnabled){
+
+flash.classList.add("active");
+
+setTimeout(()=>{
+
+flash.classList.remove("active");
+
+},400);
+
+}
+
+shutter.classList.add("active");
+
+setTimeout(()=>{
+
+shutter.classList.remove("active");
+
+},250);
+
+const imageData = canvas.toDataURL("image/png");
+
+capturedFrames.push(imageData);
+
+updatePreview(frameIndex,imageData);
+
+}
+
+function updatePreview(index,imageData){
+
+const slot = document.getElementById(`slot${index}`);
+
+slot.innerHTML = "";
+
+const img = document.createElement("img");
+
+img.src = imageData;
+
+slot.appendChild(img);
+
+}
+
+function wait(ms){
+
+return new Promise(resolve=>{
+
+setTimeout(resolve,ms);
+
+});
+
+}
+
+function showRetakeDialog(index){
+
+return new Promise(resolve=>{
+
+setTimeout(()=>{
+
+const answer = confirm(
+`Frame ${index+1} sudah diambil.\n\nOK = lanjut\nCancel = retake`
+);
+
+if(answer){
+
+resolve(true);
+
+}else{
+
+capturedFrames.splice(index,1);
+
+const slot = document.getElementById(`slot${index}`);
+
+slot.innerHTML = index+1;
+
+resolve(false);
+
+}
+
+},300);
+
+});
+
+}
+   
+   
+/* =========================
+   FRAME SELECTOR
+========================= */
+
+let selectedFrame = "white";
+
+const frameCards = document.querySelectorAll(".frame-card");
+
+frameCards.forEach(card=>{
+
+card.addEventListener("click",()=>{
+
+frameCards.forEach(c=>{
+c.classList.remove("active");
+});
+
+card.classList.add("active");
+
+selectedFrame = card.dataset.frame;
+
+});
+
+});
+
+/* =========================
+   DOWNLOAD HD
+========================= */
+
+const downloadBtn =
+document.getElementById("downloadBtn");
+
+downloadBtn.addEventListener("click",()=>{
+
+if(capturedFrames.length < 4){
+
+alert("Ambil 4 foto terlebih dahulu.");
+
+return;
+
+}
+
+generateFinalPhoto();
+
+});
+
+/* =========================
+   GENERATE FINAL
+========================= */
+
+function generateFinalPhoto(){
+
+const finalCanvas =
+document.getElementById("finalCanvas");
+
+const fctx =
+finalCanvas.getContext("2d");
+
+/* HD 3000x2250 */
+finalCanvas.width = 3000;
+finalCanvas.height = 2250;
+
+const W = finalCanvas.width;
+const H = finalCanvas.height;
+
+/* =========================
+   FRAME COLOR
+========================= */
+
+switch(selectedFrame){
+
+case "white":
+fctx.fillStyle = "#ffffff";
+break;
+
+case "black":
+fctx.fillStyle = "#111111";
+break;
+
+case "maroon":
+fctx.fillStyle = "#5c0f24";
+break;
+
+case "yellow":
+fctx.fillStyle = "#fff4a3";
+break;
+
+case "polkadot":
+
+fctx.fillStyle = "#111111";
+fctx.fillRect(0,0,W,H);
+
+for(let x=0;x<W;x+=60){
+
+for(let y=0;y<H;y+=60){
+
+fctx.beginPath();
+
+fctx.fillStyle = "#ffffff";
+
+fctx.arc(x,y,8,0,Math.PI*2);
+
+fctx.fill();
+
+}
+
+}
+
+break;
+
+}
+
+if(selectedFrame !== "polkadot"){
+
+fctx.fillRect(0,0,W,H);
+
+}
+
+/* =========================
+   PHOTO AREA
+========================= */
+
+const padding = 170;
+const gap = 70;
+
+const photoW =
+(W - padding*2 - gap)/2;
+
+const photoH =
+(H - padding*2 - gap)/2;
+
+const positions = [
+
+{
+x:padding,
+y:padding
+},
+
+{
+x:padding+photoW+gap,
+y:padding
+},
+
+{
+x:padding,
+y:padding+photoH+gap
+},
+
+{
+x:padding+photoW+gap,
+y:padding+photoH+gap
+}
+
+];
+
+let loaded = 0;
+
+capturedFrames.forEach((src,index)=>{
+
+const img = new Image();
+
+img.onload = ()=>{
+
+drawCoverImage(
+fctx,
+img,
+positions[index].x,
+positions[index].y,
+photoW,
+photoH
+);
+
+loaded++;
+
+if(loaded===4){
+
+drawWatermark(
+fctx,
+W,
+H
+);
+
+saveFinal(finalCanvas);
+
+}
+
+};
+
+img.src = src;
+
+});
+
+}
+
+/* =========================
+   NO STRETCH FACE
+========================= */
+
+function drawCoverImage(
+ctx,
+img,
+x,
+y,
+w,
+h
+){
+
+const scale =
+Math.max(
+w/img.width,
+h/img.height
+);
+
+const nw =
+img.width*scale;
+
+const nh =
+img.height*scale;
+
+const dx =
+x+(w-nw)/2;
+
+const dy =
+y+(h-nh)/2;
+
+ctx.drawImage(
+img,
+dx,
+dy,
+nw,
+nh
+);
+
+}
+
+/* =========================
+   WATERMARK
+========================= */
+
+function drawWatermark(
+ctx,
+W,
+H
+){
+
+ctx.save();
+
+ctx.font =
+"80px Papyrus";
+
+ctx.fillStyle =
+"rgba(255,255,255,.9)";
+
+ctx.textAlign =
+"center";
+
+ctx.fillText(
+"qiephotobooth",
+W/2,
+H-70
+);
+
+ctx.restore();
+
+}
+
+/* =========================
+   SAVE FILE
+========================= */
+
+function saveFinal(canvas){
+
+const link =
+document.createElement("a");
+
+link.download =
+"qiephotobooth.png";
+
+link.href =
+canvas.toDataURL(
+"image/png",
+1
+);
+
+link.click();
+
+}
+</script>
+
+</body>
+</html>
+
