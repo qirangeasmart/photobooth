@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Photobooth Online</title>
+
+<style>
+body{
+  font-family: Arial, sans-serif;
+  text-align:center;
+  background:#f2f2f2;
+  padding:20px;
+}
+
+h1{
+  color:#333;
+}
+
+video,canvas{
+  width:350px;
+  max-width:100%;
+  border-radius:15px;
+  border:5px solid white;
+  box-shadow:0 0 10px rgba(0,0,0,0.2);
+}
+
+button{
+  margin:10px;
+  padding:12px 20px;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  color:white;
+  font-size:16px;
+}
+
+#fotoBtn{
+  background:#2196F3;
+}
+
+#downloadBtn{
+  background:#4CAF50;
+}
+</style>
+
+</head>
+<body>
+
+<h1>📸 Photobooth Gratis</h1>
+
+<video id="video" autoplay playsinline></video>
+
+<br>
+
+<canvas id="canvas" style="display:none;"></canvas>
+
+<br>
+
+<button id="fotoBtn" onclick="ambilFoto()">
+Ambil Foto
+</button>
+
+<button id="downloadBtn" onclick="downloadFoto()">
+Download
+</button>
+
+<script>
+
+const video = document.getElementById("video");
+const canvas = document.getElementById("canvas");
+
+navigator.mediaDevices.getUserMedia({
+  video:true
+})
+.then(stream=>{
+  video.srcObject = stream;
+})
+.catch(()=>{
+  alert("Kamera tidak bisa dibuka");
+});
+
+function ambilFoto(){
+
+  canvas.style.display = "block";
+
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+
+  const ctx = canvas.getContext("2d");
+
+  ctx.drawImage(video,0,0);
+
+  ctx.lineWidth = 20;
+  ctx.strokeStyle = "white";
+  ctx.strokeRect(
+    0,
+    0,
+    canvas.width,
+    canvas.height
+  );
+
+  ctx.fillStyle = "white";
+  ctx.font = "28px Arial";
+  ctx.fillText(
+    "Photobooth",
+    20,
+    canvas.height - 20
+  );
+}
+
+function downloadFoto(){
+
+  const link = document.createElement("a");
+
+  link.download = "photobooth.png";
+
+  link.href = canvas.toDataURL();
+
+  link.click();
+}
+
+</script>
+
+</body>
+</html>
