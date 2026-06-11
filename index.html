@@ -1,175 +1,844 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>qiephotobooth</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+<title>Say Cheese Photobooth</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&display=swap" rel="stylesheet">
 
 <style>
-  body{
+
+:root{
+    --butter:#FFF4B8;
+    --pink:#F6B8C8;
+    --pink-dark:#E89BB0;
+    --white:#ffffff;
+    --shadow:0 10px 30px rgba(0,0,0,.12);
+}
+
+*{
     margin:0;
-    font-family:Poppins;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Fredoka',sans-serif;
+}
+
+body{
     min-height:100vh;
+
+    background:
+    radial-gradient(circle at 25px 25px,
+    rgba(246,184,200,.75) 6px,
+    transparent 7px),
+
+    radial-gradient(circle at 75px 75px,
+    rgba(246,184,200,.75) 6px,
+    transparent 7px);
+
+    background-size:100px 100px;
+    background-color:var(--butter);
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    padding:20px;
+}
+
+.container{
+    width:100%;
+    max-width:1200px;
+}
+
+.title{
+    text-align:center;
+    font-size:clamp(2rem,5vw,4rem);
+    color:#444;
+    margin-bottom:20px;
+}
+
+.subtitle{
+    text-align:center;
+    color:#666;
+    margin-bottom:25px;
+}
+
+.main{
+    display:grid;
+    grid-template-columns:1fr 350px;
+    gap:24px;
+}
+
+.camera-card{
+    background:white;
+    border-radius:30px;
+    padding:20px;
+    box-shadow:var(--shadow);
+}
+
+.preview-wrapper{
+    position:relative;
+    overflow:hidden;
+    border-radius:24px;
+}
+
+video{
+    width:100%;
+    display:block;
+
+    transform:scaleX(-1);
+
+    border-radius:24px;
+    background:black;
+}
+
+.overlay{
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.countdown{
+    width:120px;
+    height:120px;
+
+    border-radius:50%;
+
+    background:rgba(255,255,255,.9);
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    font-size:4rem;
+    font-weight:600;
+
+    color:#444;
+
+    opacity:0;
+    transition:.3s;
+}
+
+.controls{
+    margin-top:20px;
+    display:flex;
+    justify-content:center;
+}
+
+button{
+    border:none;
+    cursor:pointer;
+    transition:.25s;
+}
+
+.start-btn{
+    background:var(--pink);
+    color:white;
+
+    padding:14px 28px;
+
+    border-radius:999px;
+    font-size:1rem;
+    font-weight:600;
+}
+
+.start-btn:hover{
+    transform:translateY(-2px);
+}
+
+.side-panel{
     display:flex;
     flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    background: linear-gradient(135deg,#fdfbfb,#ebedee,#dfe9f3);
-  }
+    gap:18px;
+}
 
-  h1{
-    font-size:22px;
-    margin:10px;
-  }
-
-  video{
-    width:280px;
-    border-radius:20px;
-    box-shadow:0 10px 25px rgba(0,0,0,0.15);
-  }
-
-  .controls{
-    margin:10px;
-  }
-
-  button, select{
-    padding:10px;
-    margin:5px;
-    border:none;
-    border-radius:10px;
-    font-weight:600;
-  }
-
-  button{
-    cursor:pointer;
-    background:#111;
-    color:white;
-  }
-
-  select{
+.card{
     background:white;
-  }
+    border-radius:24px;
+    box-shadow:var(--shadow);
+    padding:20px;
+}
 
-  canvas{display:none;}
+.card h3{
+    color:#444;
+    margin-bottom:15px;
+}
 
-  .preview{
+.frames{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:10px;
+}
+
+.frame{
+    aspect-ratio:3/4;
+    background:#f5f5f5;
+    border-radius:14px;
+    overflow:hidden;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    color:#aaa;
+    font-size:.9rem;
+}
+
+.frame img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
+
+.strip-preview{
+    width:100%;
+    display:none;
+    border-radius:18px;
+    overflow:hidden;
+}
+
+.download-btn{
+    width:100%;
+    margin-top:15px;
+
+    background:var(--pink-dark);
+    color:white;
+
+    padding:14px;
+    border-radius:14px;
+
+    font-size:1rem;
+    font-weight:600;
+
+    display:none;
+}
+
+.status{
+    text-align:center;
     margin-top:10px;
-  }
+    color:#666;
+}
 
-  img{
-    width:220px;
-    border-radius:10px;
-    box-shadow:0 10px 20px rgba(0,0,0,0.15);
-  }
+.flash{
+    position:fixed;
+    inset:0;
+    background:white;
+    opacity:0;
+    pointer-events:none;
+}
+
+.flash.active{
+    animation:flash .35s;
+}
+
+@keyframes flash{
+    0%{opacity:0;}
+    30%{opacity:1;}
+    100%{opacity:0;}
+}
+
+@media(max-width:900px){
+
+    .main{
+        grid-template-columns:1fr;
+    }
+
+    .side-panel{
+        order:2;
+    }
+
+}
+
 </style>
 </head>
 
 <body>
 
-<h1>📸 Aesthetic Photobooth</h1>
+<div class="flash" id="flash"></div>
 
-<video id="video" autoplay></video>
+<div class="container">
 
-<div class="controls">
-  <button onclick="startCam()">Start Camera</button>
-  <button onclick="takePhotos()">Take 4 Photos</button>
+    <h1 class="title">📸 Say Cheese!</h1>
 
-  <select id="frameStyle">
-    <option value="white">Clean White</option>
-    <option value="black">Minimal Black</option>
-    <option value="polaroid">Polaroid Soft</option>
-    <option value="film">Film Grain</option>
-  </select>
+    <p class="subtitle">
+        Ambil 4 foto otomatis dan buat photostrip aesthetic.
+    </p>
 
-  <button onclick="download()">Download</button>
+    <div class="main">
+
+        <div class="camera-card">
+
+            <div class="preview-wrapper">
+
+                <video
+                    id="video"
+                    autoplay
+                    playsinline
+                    muted>
+                </video>
+
+                <div class="overlay">
+
+                    <div
+                        class="countdown"
+                        id="countdown">
+                        3
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="controls">
+
+                <button
+                    id="startBtn"
+                    class="start-btn">
+
+                    Start Photobooth
+
+                </button>
+
+            </div>
+
+            <p
+                class="status"
+                id="status">
+
+                Siap mengambil 4 foto
+
+            </p>
+
+        </div>
+
+        <div class="side-panel">
+
+            <div class="card">
+
+                <h3>Frame</h3>
+
+                <div class="frames">
+
+                    <div class="frame" id="frame1">
+                        Foto 1
+                    </div>
+
+                    <div class="frame" id="frame2">
+                        Foto 2
+                    </div>
+
+                    <div class="frame" id="frame3">
+                        Foto 3
+                    </div>
+
+                    <div class="frame" id="frame4">
+                        Foto 4
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="card">
+
+                <h3>Hasil Photostrip</h3>
+
+                <img
+                    id="stripPreview"
+                    class="strip-preview">
+
+                <button
+                    id="downloadBtn"
+                    class="download-btn">
+
+                    Download PNG
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
 </div>
 
-<canvas id="canvas"></canvas>
-<canvas id="final"></canvas>
-
-<div class="preview">
-  <img id="result"/>
-</div>
+<canvas
+    id="captureCanvas"
+    style="display:none;">
+</canvas>
 
 <script>
-let video = document.getElementById("video");
-let photos = [];
+  
+const video = document.getElementById("video");
+const countdown = document.getElementById("countdown");
+const startBtn = document.getElementById("startBtn");
+const statusText = document.getElementById("status");
+const flash = document.getElementById("flash");
 
-function startCam(){
-  navigator.mediaDevices.getUserMedia({video:true})
-  .then(stream => video.srcObject = stream);
-}
+const frameElements = [
+    document.getElementById("frame1"),
+    document.getElementById("frame2"),
+    document.getElementById("frame3"),
+    document.getElementById("frame4")
+];
 
-function snap(){
-  let c = document.getElementById("canvas");
-  c.width = 300;
-  c.height = 300;
-  let ctx = c.getContext("2d");
+const canvas = document.getElementById("captureCanvas");
+const ctx = canvas.getContext("2d");
 
-  ctx.drawImage(video,0,0,300,300);
-  return c.toDataURL("image/png");
-}
+const capturedPhotos = [];
 
-async function takePhotos(){
-  photos = [];
-  for(let i=0;i<4;i++){
-    photos.push(snap());
-    await new Promise(r=>setTimeout(r,600));
-  }
-  drawFinal();
-}
+let stream = null;
 
-function drawFinal(){
-  let style = document.getElementById("frameStyle").value;
-  let c = document.getElementById("final");
-  c.width = 300;
-  c.height = 600;
 
-  let ctx = c.getContext("2d");
 
-  // background style frame
-  if(style==="black") ctx.fillStyle="#111";
-  else ctx.fillStyle="#fff";
-  ctx.fillRect(0,0,c.width,c.height);
+async function startCamera(){
 
-  // spacing
-  let size = 140;
-  let pad = 10;
+    try{
 
-  photos.forEach((src,i)=>{
-    let img = new Image();
-    img.src = src;
-    img.onload = ()=>{
-      let x = (i%2)*(size+pad)+pad;
-      let y = Math.floor(i/2)*(size+pad)+pad;
+        stream = await navigator.mediaDevices.getUserMedia({
 
-      ctx.drawImage(img,x,y,size,size);
+            video:{
+                facingMode:"user",
+                width:{ideal:1080},
+                height:{ideal:1440}
+            },
 
-      // polaroid frame
-      if(style==="polaroid"){
-        ctx.fillStyle="white";
-        ctx.fillRect(x,y,size,size+20);
-      }
+            audio:false
 
-      // film overlay
-      if(style==="film"){
-        ctx.fillStyle="rgba(0,0,0,0.2)";
-        ctx.fillRect(x,y,size,size);
-      }
+        });
 
-      document.getElementById("result").src = c.toDataURL();
+        video.srcObject = stream;
+
     }
-  });
+    catch(err){
+
+        alert(
+            "Kamera tidak dapat diakses. Pastikan izin kamera sudah diberikan."
+        );
+
+        console.error(err);
+    }
+
 }
 
-function download(){
-  let link = document.createElement("a");
-  link.download = "photobooth.png";
-  link.href = document.getElementById("final").toDataURL();
-  link.click();
+
+
+startCamera();
+
+
+
+function showCountdown(value){
+
+    countdown.style.opacity = "1";
+    countdown.textContent = value;
+
 }
+
+function hideCountdown(){
+
+    countdown.style.opacity = "0";
+
+}
+
+
+
+function triggerFlash(){
+
+    flash.classList.add("active");
+
+    setTimeout(()=>{
+
+        flash.classList.remove("active");
+
+    },350);
+
+}
+
+
+
+async function runCountdown(seconds=3){
+
+    for(let i=seconds;i>=1;i--){
+
+        showCountdown(i);
+
+        await new Promise(resolve=>
+            setTimeout(resolve,1000)
+        );
+
+    }
+
+    hideCountdown();
+
+}
+
+
+
+function capturePhoto(){
+
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+
+    ctx.save();
+
+    /*
+    mirror agar hasil sama
+    dengan preview kamera depan
+    */
+
+    ctx.translate(canvas.width,0);
+    ctx.scale(-1,1);
+
+    ctx.drawImage(
+        video,
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+    ctx.restore();
+
+    return canvas.toDataURL(
+        "image/png",
+        1
+    );
+
+}
+
+
+
+function placeFramePreview(index,imageData){
+
+    const img = document.createElement("img");
+
+    img.src = imageData;
+
+    frameElements[index].innerHTML = "";
+
+    frameElements[index].appendChild(img);
+
+}
+
+
+
+async function takeFourPhotos(){
+
+    capturedPhotos.length = 0;
+
+    startBtn.disabled = true;
+
+    statusText.textContent =
+        "Bersiap mengambil foto...";
+
+    for(let i=0;i<4;i++){
+
+        statusText.textContent =
+            `Foto ${i+1} dari 4`;
+
+        await runCountdown(3);
+
+        triggerFlash();
+
+        const photo = capturePhoto();
+
+        capturedPhotos.push(photo);
+
+        placeFramePreview(i,photo);
+
+        await new Promise(resolve=>
+            setTimeout(resolve,400)
+        );
+
+    }
+
+    statusText.textContent =
+        "Membuat photostrip...";
+
+    createPhotostrip();
+
+}
+
+
+
+startBtn.addEventListener(
+
+    "click",
+
+    async ()=>{
+
+        if(!video.videoWidth){
+
+            alert(
+                "Tunggu kamera selesai dimuat."
+            );
+
+            return;
+        }
+
+        frameElements.forEach((frame,index)=>{
+
+            frame.innerHTML =
+                `Foto ${index+1}`;
+
+        });
+
+        capturedPhotos.length = 0;
+
+        await takeFourPhotos();
+
+    }
+
+);
+
+const stripPreview =
+    document.getElementById("stripPreview");
+
+const downloadBtn =
+    document.getElementById("downloadBtn");
+
+let finalStripData = null;
+
+
+
+async function loadImage(src){
+
+    return new Promise((resolve)=>{
+
+        const img = new Image();
+
+        img.onload = ()=>resolve(img);
+
+        img.src = src;
+
+    });
+
+}
+
+
+
+async function createPhotostrip(){
+
+    /*
+    ukuran photostrip
+    rasio 3:4
+    */
+
+    const stripWidth = 900;
+    const stripHeight = 1200;
+
+    const outputCanvas =
+        document.createElement("canvas");
+
+    outputCanvas.width = stripWidth;
+    outputCanvas.height = stripHeight;
+
+    const c =
+        outputCanvas.getContext("2d");
+
+
+
+    /*
+    background butter yellow
+    */
+
+    c.fillStyle = "#FFF4B8";
+    c.fillRect(
+        0,
+        0,
+        stripWidth,
+        stripHeight
+    );
+
+
+
+    /*
+    polkadot pink
+    */
+
+    c.fillStyle =
+        "rgba(246,184,200,.85)";
+
+    for(let y=40;y<stripHeight;y+=80){
+
+        for(let x=40;x<stripWidth;x+=80){
+
+            c.beginPath();
+
+            c.arc(
+                x,
+                y,
+                8,
+                0,
+                Math.PI*2
+            );
+
+            c.fill();
+
+        }
+
+    }
+
+
+
+    /*
+    header
+    */
+
+    c.fillStyle = "#555";
+
+    c.textAlign = "center";
+
+    c.font =
+        "bold 54px Fredoka, sans-serif";
+
+    c.fillText(
+        "Say Cheese!",
+        stripWidth/2,
+        95
+    );
+
+
+
+    const photoAreaTop = 140;
+
+    const sidePadding = 55;
+
+    const photoGap = 22;
+
+    const photoWidth =
+        stripWidth - (sidePadding*2);
+
+    const photoHeight = 210;
+
+
+
+    for(let i=0;i<4;i++){
+
+        const img =
+            await loadImage(
+                capturedPhotos[i]
+            );
+
+        const y =
+            photoAreaTop +
+            (photoHeight + photoGap)*i;
+
+
+
+        /*
+        frame putih
+        */
+
+        c.fillStyle = "#fff";
+
+        c.beginPath();
+
+        c.roundRect(
+            sidePadding-8,
+            y-8,
+            photoWidth+16,
+            photoHeight+16,
+            18
+        );
+
+        c.fill();
+
+
+
+        /*
+        gambar
+        */
+
+        c.drawImage(
+            img,
+            sidePadding,
+            y,
+            photoWidth,
+            photoHeight
+        );
+
+    }
+
+
+
+    /*
+    footer kecil
+    */
+
+    c.fillStyle = "#666";
+
+    c.font =
+        "28px Fredoka, sans-serif";
+
+    c.fillText(
+        new Date().toLocaleDateString(),
+        stripWidth/2,
+        stripHeight-40
+    );
+
+
+
+    finalStripData =
+        outputCanvas.toDataURL(
+            "image/png",
+            1
+        );
+
+
+
+    stripPreview.src =
+        finalStripData;
+
+    stripPreview.style.display =
+        "block";
+
+    downloadBtn.style.display =
+        "block";
+
+
+
+    statusText.textContent =
+        "Photostrip selesai ✨";
+
+    startBtn.disabled = false;
+
+}
+
+
+
+downloadBtn.addEventListener(
+
+    "click",
+
+    ()=>{
+
+        if(!finalStripData) return;
+
+        const a =
+            document.createElement("a");
+
+        a.href =
+            finalStripData;
+
+        a.download =
+            "say-cheese-photobooth.png";
+
+        document.body.appendChild(a);
+
+        a.click();
+
+        document.body.removeChild(a);
+
+    }
+
+);
+
 </script>
 
 </body>
