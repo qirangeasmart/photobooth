@@ -8,14 +8,10 @@
 
 <title>Qie Photobooth Premium</title>
 
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Caveat:wght@700&display=swap" rel="stylesheet">
+
 <style>
-
-@font-face{
-font-family:PapyrusLike;
-src:local("Papyrus");
-}
-
-*{
+ *{
 margin:0;
 padding:0;
 box-sizing:border-box;
@@ -23,34 +19,37 @@ box-sizing:border-box;
 
 :root{
 
---pink:#ff69b4;
---yellow:#fff4b0;
---maroon:#641b2e;
---shadow:0 10px 30px rgba(0,0,0,.12);
+--yellow:#FFF5B8;
+--pink:#FF7DBD;
+--dark:#222;
+--white:#fff;
 
 }
 
 body{
 
-font-family:PapyrusLike,cursive;
+font-family:'DM Sans',sans-serif;
 
 background:var(--yellow);
 
 overflow-x:hidden;
+
 min-height:100vh;
+
 position:relative;
 
 }
 
-/* =====================
+/* ===================
 RANDOM POLKADOT BG
-===================== */
+=================== */
 
 body::before{
 
 content:"";
 
 position:fixed;
+
 inset:0;
 
 pointer-events:none;
@@ -59,47 +58,50 @@ opacity:.65;
 
 background:
 
-radial-gradient(circle at 11% 13%, #ff78bf 15px, transparent 16px),
-radial-gradient(circle at 31% 75%, #ff78bf 22px, transparent 23px),
-radial-gradient(circle at 56% 18%, #ff78bf 17px, transparent 18px),
-radial-gradient(circle at 79% 33%, #ff78bf 20px, transparent 21px),
-radial-gradient(circle at 92% 68%, #ff78bf 18px, transparent 19px),
-radial-gradient(circle at 17% 56%, #ff78bf 24px, transparent 25px),
-radial-gradient(circle at 41% 92%, #ff78bf 14px, transparent 15px),
-radial-gradient(circle at 67% 81%, #ff78bf 23px, transparent 24px),
-radial-gradient(circle at 88% 8%, #ff78bf 19px, transparent 20px);
+radial-gradient(circle at 8% 12%, #ff7dbd 16px, transparent 17px),
+radial-gradient(circle at 22% 44%, #ff7dbd 24px, transparent 25px),
+radial-gradient(circle at 38% 15%, #ff7dbd 18px, transparent 19px),
+radial-gradient(circle at 54% 72%, #ff7dbd 22px, transparent 23px),
+radial-gradient(circle at 76% 24%, #ff7dbd 19px, transparent 20px),
+radial-gradient(circle at 88% 12%, #ff7dbd 26px, transparent 27px),
+radial-gradient(circle at 15% 83%, #ff7dbd 21px, transparent 22px),
+radial-gradient(circle at 32% 67%, #ff7dbd 17px, transparent 18px),
+radial-gradient(circle at 58% 92%, #ff7dbd 23px, transparent 24px),
+radial-gradient(circle at 92% 75%, #ff7dbd 20px, transparent 21px);
 
 }
 
-/* =====================
+/* ===================
 HEADER
-===================== */
+=================== */
 
 .header{
 
+padding:20px;
+
 text-align:center;
-padding:25px 15px;
 
 }
 
 .logo{
 
-font-size:3rem;
-color:#ff4ca5;
+font-family:'Caveat',cursive;
+
+font-size:4rem;
+
+color:#ff4da2;
 
 text-shadow:
-3px 3px 0 #fff,
+3px 3px 0 white,
 6px 6px 0 rgba(0,0,0,.08);
-
-letter-spacing:2px;
 
 }
 
-/* =====================
+/* ===================
 LAYOUT
-===================== */
+=================== */
 
-.wrapper{
+.container{
 
 max-width:1450px;
 
@@ -108,33 +110,47 @@ margin:auto;
 padding:20px;
 
 display:flex;
+
 gap:30px;
+
 justify-content:center;
+
 align-items:flex-start;
+
 flex-wrap:wrap;
 
 }
 
-/* =====================
-LEFT CAMERA
-===================== */
-
-.left{
+.camera-side{
 
 width:700px;
+
 max-width:95vw;
 
 }
 
+.preview-side{
+
+width:420px;
+
+max-width:95vw;
+
+}
+
+/* ===================
+CAMERA CARD
+=================== */
+
 .camera-card{
 
-background:#fff;
+background:white;
 
-border-radius:28px;
+border-radius:30px;
 
 overflow:hidden;
 
-box-shadow:var(--shadow);
+box-shadow:
+0 15px 40px rgba(0,0,0,.12);
 
 position:relative;
 
@@ -143,21 +159,21 @@ position:relative;
 video{
 
 width:100%;
-aspect-ratio:4/3;
 
-display:block;
+aspect-ratio:4/3;
 
 object-fit:cover;
 
-/* selfie mirror */
-
 transform:scaleX(-1);
+
+display:block;
 
 }
 
 .flash-layer{
 
 position:absolute;
+
 inset:0;
 
 background:white;
@@ -171,6 +187,7 @@ pointer-events:none;
 .shutter-layer{
 
 position:absolute;
+
 inset:0;
 
 background:black;
@@ -181,22 +198,22 @@ pointer-events:none;
 
 }
 
-/* =====================
+/* ===================
 COUNTDOWN
-===================== */
+=================== */
 
 .countdown{
 
 position:absolute;
 
-left:50%;
 top:50%;
+left:50%;
 
 transform:
 translate(-50%,-50%);
 
-width:160px;
-height:160px;
+width:170px;
+height:170px;
 
 border-radius:50%;
 
@@ -208,27 +225,31 @@ display:none;
 justify-content:center;
 align-items:center;
 
-font-size:72px;
+font-size:80px;
+
 font-weight:bold;
 
-color:var(--pink);
+color:#ff4da2;
 
-backdrop-filter:blur(8px);
+backdrop-filter:blur(10px);
 
 }
 
-/* =====================
+/* ===================
 BUTTONS
-===================== */
+=================== */
 
 .controls{
 
-margin-top:15px;
-
 display:flex;
+
 flex-wrap:wrap;
-justify-content:center;
+
 gap:10px;
+
+justify-content:center;
+
+margin-top:15px;
 
 }
 
@@ -236,15 +257,15 @@ gap:10px;
 
 border:none;
 
+cursor:pointer;
+
 padding:12px 18px;
 
 border-radius:18px;
 
-cursor:pointer;
+font-size:16px;
 
-font-size:18px;
-
-font-family:PapyrusLike,cursive;
+font-weight:600;
 
 transition:.2s;
 
@@ -256,47 +277,31 @@ transform:translateY(-2px);
 
 }
 
-.start{
-
-background:#ff61b2;
+.start-btn{
+background:#ff5faf;
 color:white;
-
 }
 
-.flashbtn{
-
-background:#ffe066;
-
+.flash-btn{
+background:#ffe269;
 }
 
-.retake{
-
+.retake-btn{
 background:#333;
 color:white;
-
 }
 
-.download{
-
-background:#52c26d;
+.download-btn{
+background:#59c76d;
 color:white;
-
 }
-
-/* =====================
-PREVIEW PANEL
-===================== */
-
-.right{
-
-width:430px;
-max-width:95vw;
-
-}
+   /* ===================
+PREVIEW
+=================== */
 
 .preview-title{
 
-font-size:1.6rem;
+font-size:1.4rem;
 
 margin-bottom:15px;
 
@@ -313,7 +318,7 @@ gap:12px;
 
 }
 
-.preview{
+.preview-box{
 
 aspect-ratio:4/3;
 
@@ -326,17 +331,19 @@ overflow:hidden;
 display:flex;
 
 justify-content:center;
+
 align-items:center;
 
 font-size:38px;
 
-box-shadow:var(--shadow);
-
 cursor:pointer;
+
+box-shadow:
+0 10px 25px rgba(0,0,0,.08);
 
 }
 
-.preview img{
+.preview-box img{
 
 width:100%;
 height:100%;
@@ -345,141 +352,22 @@ object-fit:cover;
 
 }
 
-/* =====================
-FRAME MODAL
-===================== */
-
-.frame-modal{
-
-position:fixed;
-
-inset:0;
-
-background:
-rgba(0,0,0,.45);
-
-display:none;
-
-justify-content:center;
-align-items:center;
-
-z-index:999;
-
-}
-
-.frame-box{
-
-background:white;
-
-padding:25px;
-
-border-radius:24px;
-
-width:800px;
-max-width:95vw;
-
-}
-
-.frame-title{
-
-font-size:2rem;
-margin-bottom:20px;
-
-text-align:center;
-
-}
-
-.frame-grid{
-
-display:grid;
-
-grid-template-columns:
-repeat(5,1fr);
-
-gap:15px;
-
-}
-
-.frame{
-
-height:120px;
-
-border-radius:18px;
-
-cursor:pointer;
-
-border:4px solid transparent;
-
-transition:.2s;
-
-}
-
-.frame.active{
-
-border-color:#ff61b2;
-
-}
-
-/* frame colors */
-
-.white{
-background:white;
-}
-
-.black{
-background:#111;
-}
-
-.maroon{
-background:#641b2e;
-}
-
-.yellow{
-background:#fff4b0;
-}
-
-.polka{
-
-background:#111;
-
-position:relative;
-
-overflow:hidden;
-
-}
-
-.polka::before{
-
-content:"";
-
-position:absolute;
-inset:0;
-
-background:
-
-radial-gradient(circle at 14% 19%, white 5px, transparent 6px),
-radial-gradient(circle at 36% 57%, white 7px, transparent 8px),
-radial-gradient(circle at 79% 24%, white 6px, transparent 7px),
-radial-gradient(circle at 68% 80%, white 5px, transparent 6px),
-radial-gradient(circle at 23% 83%, white 8px, transparent 9px);
-
-}
-
-/* =====================
+/* ===================
 RESPONSIVE
-===================== */
+=================== */
 
 @media(max-width:1000px){
 
-.wrapper{
+.container{
 
 flex-direction:column;
+
 align-items:center;
 
 }
 
-.left,
-.right{
+.camera-side,
+.preview-side{
 
 width:100%;
 
@@ -492,7 +380,6 @@ canvas{
 display:none;
 
 }
-
 </style>
 
 </head>
@@ -502,14 +389,14 @@ display:none;
 <div class="header">
 
 <h1 class="logo">
-SAY CHEESE ✨
+Say Cheese ✨
 </h1>
 
 </div>
 
-<div class="wrapper">
+<div class="container">
 
-<div class="left">
+<div class="camera-side">
 
 <div class="camera-card">
 
@@ -541,25 +428,25 @@ class="countdown">
 
 <button
 id="startBtn"
-class="btn start">
+class="btn start-btn">
 📸 Start
 </button>
 
 <button
 id="flashBtn"
-class="btn flashbtn">
+class="btn flash-btn">
 ⚡ Flash ON
 </button>
 
 <button
 id="retakeAllBtn"
-class="btn retake">
+class="btn retake-btn">
 🔄 Retake All
 </button>
 
 <button
 id="downloadBtn"
-class="btn download">
+class="btn download-btn">
 ⬇ Download
 </button>
 
@@ -567,7 +454,7 @@ class="btn download">
 
 </div>
 
-<div class="right">
+<div class="preview-side">
 
 <h2 class="preview-title">
 Preview Photos
@@ -575,64 +462,10 @@ Preview Photos
 
 <div class="preview-grid">
 
-<div class="preview" id="p0">
-1
-</div>
-
-<div class="preview" id="p1">
-2
-</div>
-
-<div class="preview" id="p2">
-3
-</div>
-
-<div class="preview" id="p3">
-4
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-<div
-id="frameModal"
-class="frame-modal">
-
-<div class="frame-box">
-
-<h2 class="frame-title">
-Choose Frame 🎀
-</h2>
-
-<div class="frame-grid">
-
-<div
-class="frame white active"
-data-frame="white">
-</div>
-
-<div
-class="frame black"
-data-frame="black">
-</div>
-
-<div
-class="frame maroon"
-data-frame="maroon">
-</div>
-
-<div
-class="frame yellow"
-data-frame="yellow">
-</div>
-
-<div
-class="frame polka"
-data-frame="polka">
-</div>
+<div class="preview-box" id="p0">1</div>
+<div class="preview-box" id="p1">2</div>
+<div class="preview-box" id="p2">3</div>
+<div class="preview-box" id="p3">4</div>
 
 </div>
 
@@ -644,15 +477,22 @@ data-frame="polka">
 <canvas id="finalCanvas"></canvas>
 
 <script>
-   /* ===================================
+/* ======================================
    QIE PHOTOBOOTH PREMIUM
    PART 2 - CAMERA ENGINE
-=================================== */
+====================================== */
 
-const video = document.getElementById("video");
-const startBtn = document.getElementById("startBtn");
-const flashBtn = document.getElementById("flashBtn");
-const retakeAllBtn = document.getElementById("retakeAllBtn");
+const video =
+document.getElementById("video");
+
+const startBtn =
+document.getElementById("startBtn");
+
+const flashBtn =
+document.getElementById("flashBtn");
+
+const retakeAllBtn =
+document.getElementById("retakeAllBtn");
 
 const flashLayer =
 document.getElementById("flashLayer");
@@ -671,25 +511,26 @@ captureCanvas.getContext("2d");
 
 let flashEnabled = true;
 
-let capturedPhotos = [];
+let photos = [];
 
-let currentFrame = 0;
+let currentPhoto = 0;
 
-let takingPhotos = false;
+let sessionRunning = false;
 
 
-/* ======================
+/* ==========================
    SHUTTER SOUND
-====================== */
+========================== */
 
-const shutterSound = new Audio(
+const shutterSound =
+new Audio(
 "https://actions.google.com/sounds/v1/camera/camera_shutter_click_01.mp3"
 );
 
 
-/* ======================
+/* ==========================
    START CAMERA
-====================== */
+========================== */
 
 async function startCamera(){
 
@@ -721,7 +562,7 @@ video.srcObject = stream;
 }catch(err){
 
 alert(
-"Camera tidak dapat diakses."
+"Kamera tidak dapat diakses."
 );
 
 console.error(err);
@@ -733,11 +574,13 @@ console.error(err);
 startCamera();
 
 
-/* ======================
+/* ==========================
    FLASH TOGGLE
-====================== */
+========================== */
 
-flashBtn.onclick = ()=>{
+flashBtn.addEventListener(
+"click",
+()=>{
 
 flashEnabled =
 !flashEnabled;
@@ -749,38 +592,15 @@ flashEnabled
 :
 "⚡ Flash OFF";
 
-};
-
-
-/* ======================
-   RETAKE ALL
-====================== */
-
-retakeAllBtn.onclick = ()=>{
-
-capturedPhotos = [];
-
-currentFrame = 0;
-
-for(let i=0;i<4;i++){
-
-const box =
-document.getElementById(
-`p${i}`
+}
 );
 
-box.innerHTML = i+1;
 
-}
-
-};
-
-
-/* ======================
+/* ==========================
    COUNTDOWN
-====================== */
+========================== */
 
-async function countdownAnimation(){
+async function runCountdown(){
 
 countdown.style.display =
 "flex";
@@ -813,7 +633,7 @@ duration:900
 
 );
 
-await wait(1000);
+await sleep(1000);
 
 }
 
@@ -823,11 +643,11 @@ countdown.style.display =
 }
 
 
-/* ======================
+/* ==========================
    FLASH EFFECT
-====================== */
+========================== */
 
-function flashEffect(){
+function showFlash(){
 
 if(!flashEnabled)
 return;
@@ -848,11 +668,11 @@ duration:350
 }
 
 
-/* ======================
+/* ==========================
    SHUTTER EFFECT
-====================== */
+========================== */
 
-function shutterEffect(){
+function showShutter(){
 
 shutterLayer.animate(
 
@@ -871,27 +691,28 @@ duration:250
 }
 
 
-/* ======================
+/* ==========================
    BEAUTY FILTER
-====================== */
+========================== */
 
 function applyBeauty(){
 
 captureCtx.filter =
 `
-brightness(1.08)
-contrast(1.04)
+brightness(1.10)
+contrast(1.05)
 saturate(1.08)
+sepia(.03)
 `;
 
 }
 
 
-/* ======================
+/* ==========================
    CAPTURE PHOTO
-====================== */
+========================== */
 
-function capturePhoto(index){
+function captureFrame(index){
 
 captureCanvas.width =
 video.videoWidth;
@@ -900,7 +721,7 @@ captureCanvas.height =
 video.videoHeight;
 
 
-/* selfie mirror */
+/* mirror selfie */
 
 captureCtx.save();
 
@@ -933,16 +754,16 @@ captureCtx.filter =
 
 try{
 
-shutterSound.currentTime=0;
+shutterSound.currentTime = 0;
 
 shutterSound.play();
 
 }catch(e){}
 
 
-flashEffect();
+showFlash();
 
-shutterEffect();
+showShutter();
 
 
 const photo =
@@ -950,10 +771,10 @@ captureCanvas.toDataURL(
 "image/png"
 );
 
-capturedPhotos[index] =
+photos[index] =
 photo;
 
-showPreview(
+updatePreview(
 index,
 photo
 );
@@ -961,11 +782,11 @@ photo
 }
 
 
-/* ======================
-   PREVIEW PANEL
-====================== */
+/* ==========================
+   PREVIEW PHOTO
+========================== */
 
-function showPreview(
+function updatePreview(
 index,
 photo
 ){
@@ -975,7 +796,7 @@ document.getElementById(
 `p${index}`
 );
 
-box.innerHTML="";
+box.innerHTML = "";
 
 const img =
 document.createElement(
@@ -989,66 +810,90 @@ box.appendChild(img);
 }
 
 
-/* ======================
-   PHOTO SESSION
-====================== */
+/* ==========================
+   START SESSION
+========================== */
 
-startBtn.onclick =
+startBtn.addEventListener(
+"click",
 async()=>{
 
-if(takingPhotos)
+if(sessionRunning)
 return;
 
 if(
-capturedPhotos.length===4
+photos.length===4
 ){
 
 alert(
-"Gunakan Retake atau Download."
+"Semua frame sudah terisi."
 );
 
 return;
 
 }
 
-takingPhotos = true;
+sessionRunning = true;
 
 for(
-let i=currentFrame;
+let i=currentPhoto;
 i<4;
 i++
 ){
 
-await countdownAnimation();
+await runCountdown();
 
-capturePhoto(i);
+captureFrame(i);
 
-currentFrame++;
+currentPhoto++;
 
-await wait(500);
+await sleep(600);
 
 }
 
-takingPhotos = false;
+sessionRunning = false;
+
+alert(
+"✨ Semua foto selesai!"
+);
+
+}
+);
 
 
-/* open frame selector */
+/* ==========================
+   RETAKE ALL
+========================== */
 
-document
-.getElementById(
-"frameModal"
-)
-.style.display =
-"flex";
+retakeAllBtn.addEventListener(
+"click",
+()=>{
 
-};
+photos = [];
+
+currentPhoto = 0;
+
+for(
+let i=0;
+i<4;
+i++
+){
+
+document.getElementById(
+`p${i}`
+).innerHTML = i+1;
+
+}
+
+}
+);
 
 
-/* ======================
-   UTIL
-====================== */
+/* ==========================
+   HELPER
+========================== */
 
-function wait(ms){
+function sleep(ms){
 
 return new Promise(
 resolve=>{
@@ -1062,94 +907,227 @@ ms
 );
 
 }
+/* ======================================
+   PART 3 - FRAME SELECTOR
+====================================== */
 
 
-/* ======================
-   DEFAULT FRAME
-====================== */
+/* ==========================
+   FRAME DATA
+========================== */
 
 let selectedFrame =
 "white";
 
-const frames =
-document.querySelectorAll(
-".frame"
+
+/* ==========================
+   CREATE FRAME MODAL
+========================== */
+
+const frameModal =
+document.createElement("div");
+
+frameModal.id =
+"frameModal";
+
+frameModal.style.cssText = `
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.45);
+display:none;
+justify-content:center;
+align-items:center;
+z-index:9999;
+`;
+
+frameModal.innerHTML = `
+
+<div style="
+background:white;
+padding:25px;
+border-radius:28px;
+width:900px;
+max-width:95vw;
+">
+
+<h2 style="
+text-align:center;
+margin-bottom:20px;
+font-size:2rem;
+">
+Choose Your Frame 🎀
+</h2>
+
+<div id="frameGrid"
+style="
+display:grid;
+grid-template-columns:
+repeat(5,1fr);
+gap:15px;
+">
+
+</div>
+
+<div style="
+text-align:center;
+margin-top:20px;
+">
+
+<button
+id="confirmFrameBtn"
+style="
+padding:12px 24px;
+border:none;
+border-radius:16px;
+background:#ff66b3;
+color:white;
+font-size:16px;
+cursor:pointer;
+">
+Done
+</button>
+
+</div>
+
+</div>
+
+`;
+
+document.body.appendChild(
+frameModal
 );
 
-frames.forEach(frame=>{
 
-frame.onclick = ()=>{
+/* ==========================
+   FRAME OPTIONS
+========================== */
 
-frames.forEach(f=>{
+const frameOptions = [
 
-f.classList.remove(
-"active"
+"white",
+"black",
+"maroon",
+"yellow",
+"polka"
+
+];
+
+const frameGrid =
+document.getElementById(
+"frameGrid"
 );
 
-});
+frameOptions.forEach(type=>{
 
-frame.classList.add(
-"active"
+const item =
+document.createElement(
+"div"
 );
 
-selectedFrame =
-frame.dataset.frame;
+item.dataset.frame =
+type;
 
-};
+item.style.height =
+"140px";
 
-});
-   /* ===================================
-   QIE PHOTOBOOTH PREMIUM
-   PART 3 - RETAKE + EXPORT HD
-=================================== */
+item.style.borderRadius =
+"18px";
+
+item.style.cursor =
+"pointer";
+
+item.style.border =
+"4px solid transparent";
 
 
-/* ======================
-   RETAKE PER FOTO
-====================== */
+if(type==="white")
+item.style.background =
+"#fff";
 
-for(let i=0;i<4;i++){
+if(type==="black")
+item.style.background =
+"#111";
 
-const box =
-document.getElementById(`p${i}`);
+if(type==="maroon")
+item.style.background =
+"#641b2e";
 
-box.addEventListener("click",async()=>{
+if(type==="yellow")
+item.style.background =
+"#FFF5B8";
 
-if(
-capturedPhotos.length < 4
-) return;
 
-const retake =
-confirm(
-`Retake foto ${i+1}?`
-);
+if(type==="polka"){
 
-if(!retake)
-return;
+item.style.background =
+"#111";
 
-await countdownAnimation();
+item.style.position =
+"relative";
 
-capturePhoto(i);
+item.innerHTML = `
 
-});
+<div style="
+position:absolute;
+inset:0;
+
+background:
+
+radial-gradient(circle at 15% 20%,white 6px,transparent 7px),
+radial-gradient(circle at 35% 70%,white 8px,transparent 9px),
+radial-gradient(circle at 80% 30%,white 7px,transparent 8px),
+radial-gradient(circle at 60% 85%,white 5px,transparent 6px),
+radial-gradient(circle at 25% 90%,white 8px,transparent 9px);
+
+">
+</div>
+
+`;
 
 }
 
 
-/* ======================
-   DOWNLOAD BUTTON
-====================== */
+item.addEventListener(
+"click",
+()=>{
 
-const downloadBtn =
-document.getElementById(
-"downloadBtn"
+document
+.querySelectorAll(
+"#frameGrid > div"
+)
+.forEach(el=>{
+
+el.style.border =
+"4px solid transparent";
+
+});
+
+item.style.border =
+"4px solid #ff66b3";
+
+selectedFrame =
+type;
+
+}
 );
 
-downloadBtn.onclick =
+frameGrid.appendChild(
+item
+);
+
+});
+
+
+/* ==========================
+   OPEN FRAME MODAL
+========================== */
+
+downloadBtn.addEventListener(
+"click",
 ()=>{
 
 if(
-capturedPhotos.length < 4
+photos.length < 4
 ){
 
 alert(
@@ -1160,14 +1138,115 @@ return;
 
 }
 
+frameModal.style.display =
+"flex";
+
+}
+);
+
+
+/* ==========================
+   CONFIRM FRAME
+========================== */
+
+document
+.getElementById(
+"confirmFrameBtn"
+)
+.addEventListener(
+"click",
+()=>{
+
+frameModal.style.display =
+"none";
+
 generateFinalPhoto();
 
+}
+);
+
+
+/* ==========================
+   RETAKE PER FOTO
+========================== */
+
+for(
+let i=0;
+i<4;
+i++
+){
+
+const box =
+document.getElementById(
+`p${i}`
+);
+
+box.addEventListener(
+"click",
+()=>{
+
+if(
+!photos[i]
+)
+return;
+
+const yes =
+confirm(
+`Retake Foto ${i+1}?`
+);
+
+if(!yes)
+return;
+
+retakeSingle(i);
+
+}
+);
+
+}
+
+
+async function retakeSingle(index){
+
+await runCountdown();
+
+captureFrame(index);
+
+}
+
+
+/* ==========================
+   PREVIEW HIGHLIGHT
+========================== */
+
+const oldUpdatePreview =
+updatePreview;
+
+updatePreview =
+function(index,photo){
+
+oldUpdatePreview(
+index,
+photo
+);
+
+const box =
+document.getElementById(
+`p${index}`
+);
+
+box.style.border =
+"4px solid #ff7dbd";
+
 };
+/* ======================================
+   PART 4 - EXPORT ENGINE
+====================================== */
 
 
-/* ======================
-   GENERATE FINAL
-====================== */
+/* ==========================
+   GENERATE FINAL PHOTO
+========================== */
 
 function generateFinalPhoto(){
 
@@ -1177,17 +1256,13 @@ document.getElementById(
 );
 
 const ctx =
-finalCanvas.getContext(
-"2d"
-);
+finalCanvas.getContext("2d");
+
 
 /* HD EXPORT */
 
-finalCanvas.width =
-3000;
-
-finalCanvas.height =
-2250;
+finalCanvas.width = 3000;
+finalCanvas.height = 2250;
 
 const W =
 finalCanvas.width;
@@ -1196,9 +1271,9 @@ const H =
 finalCanvas.height;
 
 
-/* ======================
+/* ==========================
    FRAME BACKGROUND
-====================== */
+========================== */
 
 drawFrameBackground(
 ctx,
@@ -1207,23 +1282,21 @@ H
 );
 
 
-/* ======================
-   LAYOUT 2x2
-====================== */
+/* ==========================
+   PHOTO LAYOUT
+========================== */
 
-const padding = 170;
-
+const padding = 180;
 const gap = 70;
 
-const photoW =
-(W - padding*2 - gap)
-/
-2;
+const photoWidth =
+(W - (padding*2) - gap)
+/ 2;
 
-const photoH =
-(H - padding*2 - gap)
-/
-2;
+const photoHeight =
+(H - (padding*2) - gap)
+/ 2;
+
 
 const positions = [
 
@@ -1233,40 +1306,27 @@ y:padding
 },
 
 {
-x:
-padding +
-photoW +
-gap,
-
+x:padding + photoWidth + gap,
 y:padding
 },
 
 {
 x:padding,
-
-y:
-padding +
-photoH +
-gap
+y:padding + photoHeight + gap
 },
 
 {
-x:
-padding +
-photoW +
-gap,
-
-y:
-padding +
-photoH +
-gap
+x:padding + photoWidth + gap,
+y:padding + photoHeight + gap
 }
 
 ];
 
+
 let loaded = 0;
 
-capturedPhotos.forEach(
+
+photos.forEach(
 (src,index)=>{
 
 const img =
@@ -1274,7 +1334,7 @@ new Image();
 
 img.onload = ()=>{
 
-drawCoverImage(
+drawPhotoCover(
 
 ctx,
 
@@ -1283,8 +1343,8 @@ img,
 positions[index].x,
 positions[index].y,
 
-photoW,
-photoH
+photoWidth,
+photoHeight
 
 );
 
@@ -1300,7 +1360,7 @@ W,
 H
 );
 
-downloadFinal(
+downloadPhoto(
 finalCanvas
 );
 
@@ -1315,9 +1375,9 @@ img.src = src;
 }
 
 
-/* ======================
+/* ==========================
    FRAME COLORS
-====================== */
+========================== */
 
 function drawFrameBackground(
 ctx,
@@ -1325,9 +1385,7 @@ W,
 H
 ){
 
-switch(
-selectedFrame
-){
+switch(selectedFrame){
 
 case "white":
 
@@ -1335,7 +1393,10 @@ ctx.fillStyle =
 "#ffffff";
 
 ctx.fillRect(
-0,0,W,H
+0,
+0,
+W,
+H
 );
 
 break;
@@ -1347,7 +1408,10 @@ ctx.fillStyle =
 "#111111";
 
 ctx.fillRect(
-0,0,W,H
+0,
+0,
+W,
+H
 );
 
 break;
@@ -1359,7 +1423,10 @@ ctx.fillStyle =
 "#641b2e";
 
 ctx.fillRect(
-0,0,W,H
+0,
+0,
+W,
+H
 );
 
 break;
@@ -1368,10 +1435,13 @@ break;
 case "yellow":
 
 ctx.fillStyle =
-"#fff4b0";
+"#FFF5B8";
 
 ctx.fillRect(
-0,0,W,H
+0,
+0,
+W,
+H
 );
 
 break;
@@ -1383,14 +1453,15 @@ ctx.fillStyle =
 "#111111";
 
 ctx.fillRect(
-0,0,W,H
+0,
+0,
+W,
+H
 );
-
-/* polkadot acak */
 
 for(
 let i=0;
-i<450;
+i<500;
 i++
 ){
 
@@ -1427,11 +1498,11 @@ break;
 }
 
 
-/* ======================
+/* ==========================
    NO STRETCH FACE
-====================== */
+========================== */
 
-function drawCoverImage(
+function drawPhotoCover(
 
 ctx,
 img,
@@ -1469,24 +1540,36 @@ const dy =
 y +
 (h-nh)/2;
 
+
+/* soft shadow */
+
+ctx.save();
+
+ctx.shadowColor =
+"rgba(0,0,0,.12)";
+
+ctx.shadowBlur =
+25;
+
+ctx.shadowOffsetY =
+8;
+
 ctx.drawImage(
-
 img,
-
 dx,
 dy,
-
 nw,
 nh
-
 );
+
+ctx.restore();
 
 }
 
 
-/* ======================
+/* ==========================
    WATERMARK
-====================== */
+========================== */
 
 function drawWatermark(
 ctx,
@@ -1520,11 +1603,11 @@ ctx.restore();
 }
 
 
-/* ======================
+/* ==========================
    DOWNLOAD PNG
-====================== */
+========================== */
 
-function downloadFinal(
+function downloadPhoto(
 canvas
 ){
 
@@ -1545,242 +1628,562 @@ canvas.toDataURL(
 link.click();
 
 }
+/* ======================================
+   PART 5 - PREMIUM EXPERIENCE
+====================================== */
 
 
-/* ======================
-   CLOSE MODAL
-====================== */
+/* ==========================
+   RESULT PREVIEW MODAL
+========================== */
+
+const resultModal =
+document.createElement("div");
+
+resultModal.id =
+"resultModal";
+
+resultModal.style.cssText = `
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.6);
+display:none;
+justify-content:center;
+align-items:center;
+z-index:99999;
+`;
+
+resultModal.innerHTML = `
+
+<div style="
+background:white;
+padding:25px;
+border-radius:25px;
+width:90%;
+max-width:900px;
+text-align:center;
+">
+
+<h2 style="
+margin-bottom:15px;
+font-family:'Caveat',cursive;
+font-size:2.5rem;
+color:#ff5faf;
+">
+Your Photobooth ✨
+</h2>
+
+<img
+id="resultPreviewImage"
+style="
+width:100%;
+border-radius:20px;
+box-shadow:0 15px 30px rgba(0,0,0,.12);
+"
+>
+
+<div style="
+margin-top:20px;
+display:flex;
+justify-content:center;
+gap:10px;
+flex-wrap:wrap;
+">
+
+<button
+id="confirmDownloadBtn"
+class="btn download-btn">
+⬇ Download
+</button>
+
+<button
+id="closePreviewBtn"
+class="btn retake-btn">
+✖ Close
+</button>
+
+</div>
+
+</div>
+
+`;
+
+document.body.appendChild(
+resultModal
+);
+
+
+/* ==========================
+   SHOW RESULT PREVIEW
+========================== */
+
+let latestExportData =
+null;
+
+const originalDownload =
+downloadPhoto;
+
+downloadPhoto =
+function(canvas){
+
+latestExportData =
+canvas.toDataURL(
+"image/png",
+1
+);
 
 document
 .getElementById(
-"frameModal"
+"resultPreviewImage"
+)
+.src =
+latestExportData;
+
+resultModal.style.display =
+"flex";
+
+};
+
+
+/* ==========================
+   CONFIRM DOWNLOAD
+========================== */
+
+document
+.getElementById(
+"confirmDownloadBtn"
 )
 .addEventListener(
 "click",
-(e)=>{
+()=>{
 
-if(
-e.target.id ===
-"frameModal"
-){
+const link =
+document.createElement(
+"a"
+);
 
-e.target.style.display =
-"none";
+link.download =
+"qiephotobooth.png";
 
-}
+link.href =
+latestExportData;
+
+link.click();
 
 }
 );
-   
-/* ===================================
-   PREMIUM PLUS FEATURES
-=================================== */
 
 
-/* ======================
-   PREVIEW BORDER PINK
-====================== */
+/* ==========================
+   CLOSE PREVIEW
+========================== */
 
-function refreshPreviewBorder(){
+document
+.getElementById(
+"closePreviewBtn"
+)
+.addEventListener(
+"click",
+()=>{
 
-for(let i=0;i<4;i++){
+resultModal.style.display =
+"none";
+
+}
+);
+
+
+/* ==========================
+   COUNTDOWN GLOW EFFECT
+========================== */
+
+const oldCountdown =
+runCountdown;
+
+runCountdown =
+async function(){
+
+countdown.style.boxShadow =
+"0 0 40px #ff7dbd";
+
+await oldCountdown();
+
+countdown.style.boxShadow =
+"none";
+
+};
+
+
+/* ==========================
+   SMOOTH FLASH
+========================== */
+
+showFlash =
+function(){
+
+if(!flashEnabled)
+return;
+
+flashLayer.animate(
+
+[
+{
+opacity:0
+},
+
+{
+opacity:1
+},
+
+{
+opacity:0
+}
+
+],
+
+{
+duration:500
+}
+
+);
+
+};
+
+
+/* ==========================
+   PREVIEW HOVER EFFECT
+========================== */
+
+for(
+let i=0;
+i<4;
+i++
+){
 
 const box =
-document.getElementById(`p${i}`);
+document.getElementById(
+`p${i}`
+);
 
-if(capturedPhotos[i]){
+box.addEventListener(
+"mouseenter",
+()=>{
+
+box.style.transform =
+"scale(1.03)";
+
+}
+);
+
+box.addEventListener(
+"mouseleave",
+()=>{
+
+box.style.transform =
+"scale(1)";
+
+}
+);
+
+}
+
+
+/* ==========================
+   MOBILE FIX
+========================== */
+
+if(
+window.innerWidth < 768
+){
+
+document
+.querySelector(
+".logo"
+)
+.style.fontSize =
+"3rem";
+
+}
+
+
+/* ==========================
+   FINISH SESSION EFFECT
+========================== */
+
+const originalStart =
+startBtn.onclick;
+
+startBtn.onclick =
+async()=>{
+
+await originalStart;
+
+if(
+photos.length === 4
+){
+
+setTimeout(()=>{
+
+alert(
+"🎉 Photobooth selesai!\nPilih frame favoritmu lalu download."
+);
+
+},500);
+
+}
+
+};
+/* ======================================
+   PART 6 - FINAL POLISH
+====================================== */
+
+
+/* ==========================
+   COUNTDOWN PROGRESS RING
+========================== */
+
+const ring =
+document.createElement("div");
+
+ring.id = "progressRing";
+
+ring.style.cssText = `
+position:absolute;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+width:210px;
+height:210px;
+border-radius:50%;
+border:8px solid rgba(255,255,255,.5);
+display:none;
+pointer-events:none;
+`;
+
+document
+.querySelector(".camera-card")
+.appendChild(ring);
+
+
+/* override countdown */
+
+const originalRunCountdown =
+runCountdown;
+
+runCountdown = async function(){
+
+ring.style.display =
+"block";
+
+ring.animate(
+
+[
+{
+transform:
+"translate(-50%,-50%) rotate(0deg)"
+},
+
+{
+transform:
+"translate(-50%,-50%) rotate(360deg)"
+}
+],
+
+{
+duration:3000
+}
+
+);
+
+await originalRunCountdown();
+
+ring.style.display =
+"none";
+
+};
+
+
+/* ==========================
+   RETAKE SELECTED BUTTON
+========================== */
+
+const retakeSelectedBtn =
+document.createElement(
+"button"
+);
+
+retakeSelectedBtn.innerHTML =
+"📷 Retake Selected";
+
+retakeSelectedBtn.className =
+"btn retake-btn";
+
+document
+.querySelector(".controls")
+.appendChild(
+retakeSelectedBtn
+);
+
+let selectedPreview =
+null;
+
+
+for(
+let i=0;
+i<4;
+i++
+){
+
+const box =
+document.getElementById(
+`p${i}`
+);
+
+box.addEventListener(
+"click",
+()=>{
+
+selectedPreview = i;
+
+document
+.querySelectorAll(
+".preview-box"
+)
+.forEach(el=>{
+
+el.style.border =
+"none";
+
+});
 
 box.style.border =
 "4px solid #ff69b4";
 
 }
-
-}
-
-}
-
-const oldPreview =
-showPreview;
-
-showPreview = function(index,photo){
-
-oldPreview(index,photo);
-
-refreshPreviewBorder();
-
-};
-
-
-/* ======================
-   CONFIRM DOWNLOAD
-====================== */
-
-const oldGenerate =
-generateFinalPhoto;
-
-generateFinalPhoto = function(){
-
-const ok =
-confirm(
-"Download photobooth sekarang?"
 );
 
-if(!ok)
+}
+
+
+retakeSelectedBtn.onclick =
+async()=>{
+
+if(
+selectedPreview===null
+){
+
+alert(
+"Pilih foto dahulu."
+);
+
 return;
 
-oldGenerate();
+}
+
+await runCountdown();
+
+captureFrame(
+selectedPreview
+);
 
 };
 
 
-/* ======================
-   AUTO CLOSE MODAL
-====================== */
-
-frames.forEach(frame=>{
-
-frame.addEventListener(
-"dblclick",
-()=>{
+/* ==========================
+   FRAME THUMBNAIL LABEL
+========================== */
 
 document
-.getElementById(
-"frameModal"
+.querySelectorAll(
+"#frameGrid > div"
 )
-.style.display =
-"none";
+.forEach(frame=>{
 
-}
+const label =
+document.createElement(
+"span"
+);
+
+label.style.cssText = `
+position:absolute;
+bottom:8px;
+left:0;
+right:0;
+text-align:center;
+font-size:12px;
+font-weight:bold;
+color:white;
+`;
+
+label.innerText =
+frame.dataset.frame;
+
+frame.style.position =
+"relative";
+
+frame.appendChild(
+label
 );
 
 });
 
 
-/* ======================
-   POLAROID SHADOW
-====================== */
+/* ==========================
+   USE THIS FRAME BUTTON
+========================== */
 
-const oldDraw =
-drawCoverImage;
-
-drawCoverImage =
-function(
-ctx,
-img,
-x,
-y,
-w,
-h
-){
-
-ctx.save();
-
-ctx.shadowColor =
-"rgba(0,0,0,.15)";
-
-ctx.shadowBlur =
-20;
-
-ctx.shadowOffsetY =
-8;
-
-oldDraw(
-ctx,
-img,
-x,
-y,
-w,
-h
+const useFrameBtn =
+document.createElement(
+"button"
 );
 
-ctx.restore();
+useFrameBtn.innerHTML =
+"✨ Use This Frame";
 
-};
-
-
-/* ======================
-   EXTRA BEAUTY
-====================== */
-
-const oldBeauty =
-applyBeauty;
-
-applyBeauty =
-function(){
-
-captureCtx.filter =
-`
-brightness(1.12)
-contrast(1.05)
-saturate(1.12)
-sepia(.03)
+useFrameBtn.style.cssText = `
+padding:12px 20px;
+border:none;
+border-radius:14px;
+background:#ff69b4;
+color:white;
+font-size:15px;
+cursor:pointer;
+margin-top:15px;
 `;
 
-};
-
-
-/* ======================
-   RANDOM PINK TONE
-====================== */
-
-function addPinkTone(
-ctx,
-W,
-H
-){
-
-ctx.save();
-
-ctx.fillStyle =
-"rgba(255,120,180,.04)";
-
-ctx.fillRect(
-0,
-0,
-W,
-H
+document
+.querySelector(
+"#confirmFrameBtn"
+)
+.parentNode
+.appendChild(
+useFrameBtn
 );
 
-ctx.restore();
+useFrameBtn.onclick =
+()=>{
 
-}
-
-const oldWatermark =
-drawWatermark;
-
-drawWatermark =
-function(
-ctx,
-W,
-H
-){
-
-addPinkTone(
-ctx,
-W,
-H
-);
-
-oldWatermark(
-ctx,
-W,
-H
+alert(
+`Frame "${selectedFrame}" dipilih ✨`
 );
 
 };
 
 
-/* ======================
-   FINISH MESSAGE
-====================== */
+/* ==========================
+   FINAL READY MESSAGE
+========================== */
 
-setTimeout(()=>{
+window.addEventListener(
+"load",
+()=>{
 
 console.log(
-"Qie Photobooth Premium Loaded ✨"
+"Qie Photobooth Premium Ready ✨"
 );
 
-},1000);
+}
+);
 </script>
 
 </body>
